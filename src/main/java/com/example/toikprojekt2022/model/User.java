@@ -3,6 +3,7 @@ package com.example.toikprojekt2022.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Klasa reprezentuje użytkownika
@@ -11,9 +12,7 @@ import java.util.List;
 @Entity
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "id_Sequence")
-    @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ_ZONE")
-    private int userId;
+    private UUID userId;
     private String login;
     private String password;
     private String name;
@@ -26,7 +25,7 @@ public class User {
     @OneToMany(mappedBy = "cartOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<CartItem> shoppingCartItems;
 
-    public User(int userId, String login, String password,
+    public User(UUID userId, String login, String password,
                 String name, String surname, String address,
                 String debitCardNumber, String expireDate, String cvv, String email) {
         this.userId = userId;
@@ -44,6 +43,7 @@ public class User {
     public User(String login, String password, String name,
                 String surname, String address, String debitCardNumber,
                 String expireDate, String cvv, String email) {
+        this.userId = UUID.randomUUID();
         this.login = login;
         this.password = password;
         this.name = name;
@@ -88,7 +88,7 @@ public class User {
                 '}';
     }
 
-    public User(int userId,
+    public User(UUID userId,
                 String login,
                 String password,
                 String name,
@@ -160,11 +160,11 @@ public class User {
         this.cvv = cvv;
     }
 
-    public int getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

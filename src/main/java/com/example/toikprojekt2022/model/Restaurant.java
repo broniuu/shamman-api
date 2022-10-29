@@ -2,7 +2,7 @@ package com.example.toikprojekt2022.model;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 /**
  * Klasa reprezentuje restaurację
@@ -11,23 +11,26 @@ import java.util.Set;
 @Entity
 public class Restaurant {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "id_Sequence")
-    @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ_ZONE")
-    private int restaurantId;
+    private UUID restaurantId;
     private String name;
     private String imageUrl;
     @OneToMany(mappedBy = "restaurant", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Dish> dishes;
 
+    public Restaurant(String name, String imageUrl) {
+        this.restaurantId = UUID.randomUUID();
+        this.name = name;
+        this.imageUrl = imageUrl;
+    }
 
-    public Restaurant(int restaurantId, String name, String imageUrl) {
+    public Restaurant(UUID restaurantId, String name, String imageUrl) {
         this.restaurantId = restaurantId;
         this.name = name;
         this.imageUrl = imageUrl;
     }
 
     public Restaurant() {
-
+        this.restaurantId = UUID.randomUUID();
     }
 
     public String getImageUrl() {
@@ -38,11 +41,11 @@ public class Restaurant {
         this.imageUrl = imageUrl;
     }
 
-    public int getRestaurantId() {
+    public UUID getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(int restaurantId) {
+    public void setRestaurantId(UUID restaurantId) {
         this.restaurantId = restaurantId;
     }
 

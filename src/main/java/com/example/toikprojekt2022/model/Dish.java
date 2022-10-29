@@ -1,6 +1,7 @@
 package com.example.toikprojekt2022.model;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * Klasa reprezentuje danie
@@ -9,20 +10,22 @@ import javax.persistence.*;
 @Entity
 public class Dish {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "id_Sequence")
-    @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ_ZONE")
-    private int dishId;
+    private UUID dishId;
     private String name;
     private String description;
     private Double price;
     @Column(insertable = false, updatable = false)
-    private int restaurantId;
+    private UUID restaurantId;
     private String imageUrl;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "restaurantId", nullable = false)
     private Restaurant restaurant;
 
-    public Dish(int dishId, String name, String description, Double price, String imageUrl, Restaurant restaurant) {
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "dishId", nullable = false)
+    private CartItem cartItem;
+
+    public Dish(UUID dishId, String name, String description, Double price, String imageUrl, Restaurant restaurant) {
         this.dishId = dishId;
         this.name = name;
         this.description = description;
@@ -31,8 +34,17 @@ public class Dish {
         this.restaurant = restaurant;
     }
 
-    public Dish() {
+    public Dish(String name, String description, Double price, String imageUrl, Restaurant restaurant) {
+        this.dishId = UUID.randomUUID();
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.restaurant = restaurant;
+    }
 
+    public Dish() {
+        this.dishId = UUID.randomUUID();
     }
 
     @Override
@@ -63,11 +75,11 @@ public class Dish {
         this.imageUrl = imageUrl;
     }
 
-    public int getDishId() {
+    public UUID getDishId() {
         return dishId;
     }
 
-    public void setDishId(int dishId) {
+    public void setDishId(UUID dishId) {
         this.dishId = dishId;
     }
 
@@ -87,12 +99,27 @@ public class Dish {
         this.price = price;
     }
 
-    public int getRestaurantId() {
+    public UUID getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(int restaurantId) {
+    public void setRestaurantId(UUID restaurantId) {
         this.restaurantId = restaurantId;
     }
 
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public CartItem getCartItem() {
+        return cartItem;
+    }
+
+    public void setCartItem(CartItem cartItem) {
+        this.cartItem = cartItem;
+    }
 }

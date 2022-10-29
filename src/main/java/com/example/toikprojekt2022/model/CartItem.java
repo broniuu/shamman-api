@@ -1,6 +1,7 @@
 package com.example.toikprojekt2022.model;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * Klasa reprezentuje produkt z koszyka
@@ -9,28 +10,31 @@ import javax.persistence.*;
 @Entity
 public class CartItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "id_Sequence")
-    @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ_ZONE")
-    private int cartItemId;
+    private UUID cartItemId;
+    @Column(insertable = false, updatable = false)
+    private UUID cartOwnerId;
+    @Column(insertable = false, updatable = false)
+    private int dishId;
     private int countOfDish;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "cartOwnerId", nullable = false)
     private User cartOwner;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "dishId", nullable = false)
     private Dish dish;
-
     public CartItem(User cartOwner, Dish dish) {
+        this.cartItemId = UUID.randomUUID();
         this.cartOwner = cartOwner;
         this.dish = dish;
         this.countOfDish = 1;
     }
     public CartItem(User cartOwner, Dish dish,int countOfDish) {
+        this.cartItemId = UUID.randomUUID();
         this.cartOwner = cartOwner;
         this.dish = dish;
         this.countOfDish = countOfDish;
     }
-    public CartItem(int cartItemId, User cartOwner, Dish dish, int countOfDish) {
+    public CartItem(UUID cartItemId, User cartOwner, Dish dish, int countOfDish) {
         this.cartItemId = cartItemId;
         this.cartOwner = cartOwner;
         this.dish = dish;
@@ -41,11 +45,11 @@ public class CartItem {
 
     }
 
-    public int getCartItemId() {
+    public UUID getCartItemId() {
         return cartItemId;
     }
 
-    public void setCartItemId(int cartItemId) {
+    public void setCartItemId(UUID cartItemId) {
         this.cartItemId = cartItemId;
     }
 
@@ -71,5 +75,21 @@ public class CartItem {
 
     public void setCountOfDish(int countOfDish) {
         this.countOfDish = countOfDish;
+    }
+
+    public int getDishId() {
+        return dishId;
+    }
+
+    public void setDishId(int dishId) {
+        this.dishId = dishId;
+    }
+
+    public UUID getCartOwnerId() {
+        return cartOwnerId;
+    }
+
+    public void setCartOwnerId(UUID cartOwnerId) {
+        this.cartOwnerId = cartOwnerId;
     }
 }
