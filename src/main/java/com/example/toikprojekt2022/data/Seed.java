@@ -38,7 +38,16 @@ public class Seed {
                 new Restaurant("Restauracja Soprano" ,""),
                 new Restaurant("Restauracja Różana" ,""),
                 new Restaurant("Restauracja Pół na Pół" ,"")
+
         );
+//        https://restauracjaujana.pl/wp-content/uploads/2018/03/logo-text.png
+//        https://www.americanrestaurant.pl/wp-content/uploads/2019/01/american-restaurant-logo-footer-new-1.png
+//        https://restaumatic-production.imgix.net/uploads/restaurants/84699/logo/1629964980.png?auto=compress&crop=focalpoint&fit=clip&h=500&w=500
+//        https://zakupersi.com/wp-content/uploads/2020/04/glovo.png
+//        https://restaumatic-production.imgix.net/uploads/restaurants/35383/logo/1591080813.png?auto=compress&crop=focalpoint&fit=max&h=200&w=200
+//        https://restaumatic-production.imgix.net/uploads/restaurants/17770/logo/1507737005.png?auto=compress&crop=focalpoint&fit=clip&h=500&w=500
+//        http://www.rozana-batorego19.pl/wp-content/uploads/2020/02/81894919_110245320506614_5467250534652051456_o-300x254.jpg
+//        https://polnapol-tarnow.pl/wp/wp-content/uploads/2020/08/pnp_logo_2020-sierpien.png
         restaurantRepository.saveAll(restaurants);
         Restaurant firstRestaurant = restaurants.get(1);
         Iterable<Dish> dishes = List.of(
