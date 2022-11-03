@@ -70,8 +70,8 @@ public class User {
     }
 
     public User() {
+        this.userId = UUID.randomUUID();
     }
-
     @Override
     public String toString() {
         return "User{" +
