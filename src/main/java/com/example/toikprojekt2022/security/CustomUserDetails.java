@@ -1,4 +1,4 @@
-package com.example.toikprojekt2022.service;
+package com.example.toikprojekt2022.security;
 
 import com.example.toikprojekt2022.model.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 public class CustomUserDetails implements UserDetails {
 
-    private User user;
+    private final User user;
 
     public CustomUserDetails(User user) {
         this.user = user;
