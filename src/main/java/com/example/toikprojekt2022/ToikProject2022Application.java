@@ -4,7 +4,6 @@ import com.example.toikprojekt2022.data.Seed;
 import com.example.toikprojekt2022.model.CartItem;
 import com.example.toikprojekt2022.model.Dish;
 import com.example.toikprojekt2022.model.Restaurant;
-import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.repository.CartItemRepository;
 import com.example.toikprojekt2022.repository.DishRepository;
 import com.example.toikprojekt2022.repository.RestaurantRepository;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
 

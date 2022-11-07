@@ -1,6 +1,8 @@
 package com.example.toikprojekt2022.model;
 
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
@@ -24,21 +26,6 @@ public class User {
     private String email;
     @OneToMany(mappedBy = "cartOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<CartItem> shoppingCartItems;
-
-    public User(UUID userId, String login, String password,
-                String name, String surname, String address,
-                String debitCardNumber, String expireDate, String cvv, String email) {
-        this.userId = userId;
-        this.login = login;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.address = address;
-        this.debitCardNumber = debitCardNumber;
-        this.expireDate = expireDate;
-        this.cvv = cvv;
-        this.email = email;
-    }
 
     public User(String login, String password, String name,
                 String surname, String address, String debitCardNumber,
