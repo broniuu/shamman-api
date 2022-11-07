@@ -1,24 +1,35 @@
 package com.example.toikprojekt2022.dto;
 
 import com.sun.istack.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 public class UserDto {
     @NotNull
+    @NotEmpty
     private String login;
     @NotNull
+    @NotEmpty
     private String password;
     @NotNull
+    @NotEmpty
     private String name;
     @NotNull
+    @NotEmpty
     private String surname;
     @NotNull
+    @NotEmpty
     private String address;
     @NotNull
+    @NotEmpty
     private String debitCardNumber;
     @NotNull
+    @NotEmpty
     private String expireDate;
     @NotNull
+    @NotEmpty
     private String cvv;
+
     @NotNull
+    @NotEmpty
     private String email;
 
     public String getLogin() {
