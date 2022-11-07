@@ -899,5 +899,6 @@ public class Seed {
             );
             dishRepository.saveAll(dishes);
         }
+
     }
 }
