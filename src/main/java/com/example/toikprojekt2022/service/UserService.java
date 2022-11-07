@@ -6,19 +6,22 @@ import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.repository.UserRepository;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+
 @Service
 @Transactional
 public class UserService implements IUserService{
     private final UserRepository userRepository;
     private final Mapper mapper;
 
-    public UserService(UserRepository userRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
@@ -33,6 +36,7 @@ public class UserService implements IUserService{
                     + userDto.getLogin());
         }
         User userToRegister = mapper.map(userDto,User.class);
+        encodePassword(userToRegister, userDto);
         return userRepository.save(userToRegister);
     }
     private boolean emailExists(String email) {
@@ -41,5 +45,8 @@ public class UserService implements IUserService{
 
     private boolean loginExists(String login) {
         return userRepository.findByLogin(login) != null;
+    }
+    private void encodePassword( User user, UserDto userDto){
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
     }
 }
