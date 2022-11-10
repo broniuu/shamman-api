@@ -79,7 +79,7 @@ public class CartItemService implements ICartItemService {
             cartItemRepository.save(cartItemWithTheSameId);
 
         } else {
-            cartItemRepository.deleteById(cartItemWithTheSameId.getCartItemId());
+            cartItemRepository.deleteByCartItemId(cartItemWithTheSameId.getCartItemId());
         }
         CartItemDto cartItemDto = mapper.map(cartItemWithTheSameId, CartItemDto.class);
         return cartItemDto;
