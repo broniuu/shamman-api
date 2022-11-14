@@ -14,12 +14,12 @@ public class CartItem {
     @Column(insertable = false, updatable = false)
     private UUID cartOwnerId;
     @Column(insertable = false, updatable = false)
-    private int dishId;
+    private UUID dishId;
     private int countOfDish;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "cartOwnerId", nullable = false)
     private User cartOwner;
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "dishId", nullable = false)
     private Dish dish;
     public CartItem(User cartOwner, Dish dish) {
@@ -27,6 +27,8 @@ public class CartItem {
         this.cartOwner = cartOwner;
         this.dish = dish;
         this.countOfDish = 1;
+        this.cartOwnerId = cartOwner.getUserId();
+        this.dishId = dish.getDishId();
     }
     public CartItem(User cartOwner, Dish dish,int countOfDish) {
         this.cartItemId = UUID.randomUUID();
@@ -77,11 +79,11 @@ public class CartItem {
         this.countOfDish = countOfDish;
     }
 
-    public int getDishId() {
+    public UUID getDishId() {
         return dishId;
     }
 
-    public void setDishId(int dishId) {
+    public void setDishId(UUID dishId) {
         this.dishId = dishId;
     }
 

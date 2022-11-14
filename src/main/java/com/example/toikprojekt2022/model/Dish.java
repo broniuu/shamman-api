@@ -21,9 +21,9 @@ public class Dish {
     @JoinColumn(name = "restaurantId", nullable = false)
     private Restaurant restaurant;
 
-    @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "dishId", nullable = false)
-    private CartItem cartItem;
+//    @OneToOne(cascade = CascadeType.DETACH)
+//    @JoinColumn(name = "dishId", nullable = false)
+//    private CartItem cartItem;
 
     public Dish(UUID dishId, String name, String description, Double price, String imageUrl, Restaurant restaurant) {
         this.dishId = dishId;
@@ -115,11 +115,11 @@ public class Dish {
         this.restaurant = restaurant;
     }
 
-    public CartItem getCartItem() {
-        return cartItem;
-    }
-
-    public void setCartItem(CartItem cartItem) {
-        this.cartItem = cartItem;
-    }
+//    public CartItem getCartItem() {
+//        return cartItem;
+//    }
+//
+//    public void setCartItem(CartItem cartItem) {
+//        this.cartItem = cartItem;
+//    }
 }

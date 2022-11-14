@@ -27,7 +27,6 @@ public class UserDto {
     @NotNull
     @NotEmpty
     private String cvv;
-
     @NotNull
     @NotEmpty
     private String email;
