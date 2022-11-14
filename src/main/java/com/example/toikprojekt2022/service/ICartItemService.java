@@ -6,6 +6,6 @@ import java.util.UUID;
 
 public interface ICartItemService {
     Iterable<CartItemDto> findCartItemsByOwnersLogin(String login);
-    CartItemDto upsertCartItem(String ownerLogin, UUID dishId);
+    CartItemDto upsertCartItem(String ownerLogin, UUID dishId, int countOfDish);
     CartItemDto deleteCartItem(String ownerLogin, UUID cartItemId);
 }

@@ -2,7 +2,6 @@ package com.example.toikprojekt2022.dto;
 
 import com.example.toikprojekt2022.model.Dish;
 import com.example.toikprojekt2022.model.User;
-
 import javax.persistence.*;
 import java.util.UUID;
 

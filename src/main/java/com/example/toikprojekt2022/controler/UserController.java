@@ -6,6 +6,8 @@ import com.example.toikprojekt2022.repository.UserRepository;
 import com.example.toikprojekt2022.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 public class UserController {
@@ -15,8 +17,8 @@ public class UserController {
         this.userService = new UserService(userRepository, passwordEncoder);
     }
     @PostMapping(value ="/user/registration")
-    public User registerUserAccount(@RequestBody UserDto userDto) throws RuntimeException {
+    public ResponseEntity<User> registerUserAccount(@RequestBody UserDto userDto) throws RuntimeException {
         User registered = userService.registerNewUserAccount(userDto);
-        return registered;
+        return new ResponseEntity<>(registered, HttpStatus.OK);
     }
 }

@@ -1,9 +1,10 @@
 package com.example.toikprojekt2022.controler;
 
 import com.example.toikprojekt2022.dto.CartItemDto;
-import com.example.toikprojekt2022.model.CartItem;
 import com.example.toikprojekt2022.repository.CartItemRepository;
 import com.example.toikprojekt2022.service.ICartItemService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -18,18 +19,18 @@ public class CartItemController {
     }
 
     @GetMapping("{login}/usercart")
-    public Iterable<CartItemDto> getCartItemsByUser(@PathVariable String login){
-        return cartItemService.findCartItemsByOwnersLogin(login);
+    public ResponseEntity<Iterable<CartItemDto>> getCartItemsByUser(@PathVariable String login){
+        return new ResponseEntity(cartItemService.findCartItemsByOwnersLogin(login), HttpStatus.OK);
     }
 
-    @PostMapping("{login}/usercart/{dishId}/save")
-    public CartItemDto getCartItemsByUser(@PathVariable String login, @PathVariable UUID dishId){
-        CartItemDto cartItemDto = cartItemService.upsertCartItem(login,dishId);
-        return cartItemDto;
+    @PostMapping("{login}/usercart/{dishId}/save/{count}")
+    public ResponseEntity<CartItemDto> upsertCartItem(@PathVariable String login, @PathVariable UUID dishId, @PathVariable int count){
+        CartItemDto cartItemDto = cartItemService.upsertCartItem(login,dishId,count);
+        return new ResponseEntity(cartItemDto, HttpStatus.OK);
     }
     @DeleteMapping ("{login}/usercart/{cartItemId}/delete")
-    public CartItemDto etCartItemsByUser(@PathVariable String login, @PathVariable UUID cartItemId){
+    public ResponseEntity<CartItemDto> deleteCartItem(@PathVariable String login, @PathVariable UUID cartItemId){
         CartItemDto cartItemDto = cartItemService.deleteCartItem(login, cartItemId);
-        return cartItemDto;
+        return new ResponseEntity(cartItemDto, HttpStatus.OK);
     }
 }
