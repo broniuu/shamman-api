@@ -45,9 +45,7 @@ public class CartItemService implements ICartItemService {
 
     @Override
     public CartItemDto upsertCartItem(String ownerLogin, UUID dishId, int countOfDish) {
-        List<CartItem> cartItems = (List<CartItem>)cartItemRepository.findAllByCartOwnerLogin(ownerLogin);
-        CartItem cartItemWithTheSameDishId = cartItems.stream().filter(c -> c.getDishId()
-                .equals(dishId)).findFirst().orElse(null);
+        CartItem cartItemWithTheSameDishId = cartItemRepository.findByOwnerLoginAndDishId(ownerLogin, dishId).orElse(null);
         if (cartItemWithTheSameDishId == null) {
             User owner = userRepository.findByLogin(ownerLogin);
             Dish dish = dishRepository.findById(dishId).get();
@@ -64,11 +62,24 @@ public class CartItemService implements ICartItemService {
 
     @Override
     public CartItemDto deleteCartItem(String ownerLogin, UUID cartItemId) throws ResourceNotFoundException {
-        List<CartItem> cartItems = (List<CartItem>)cartItemRepository.findAllByCartOwnerLogin(ownerLogin);
-        CartItem cartItemWithTheSameId = cartItems.stream().filter(c -> c.getCartItemId().equals(cartItemId))
-                .findFirst().orElseThrow(() -> new ResourceNotFoundException("Not found CartItem of user " + ownerLogin + " with id = " + cartItemId));
+        CartItem cartItemWithTheSameId = cartItemRepository.findByOwnerLoginAndCartItemId(
+                ownerLogin,
+                cartItemId).orElseThrow(
+                        () -> new ResourceNotFoundException("Not found CartItem of user " + ownerLogin + " with id = " + cartItemId)
+        );
         cartItemRepository.deleteByCartItemId(cartItemWithTheSameId.getCartItemId());
         CartItemDto cartItemDto = mapper.map(cartItemWithTheSameId, CartItemDto.class);
+        return cartItemDto;
+    }
+
+    @Override
+    public CartItemDto findUserCartItemById(String ownerLogin, UUID cartItemId) throws ResourceNotFoundException {
+        CartItem cartItem = cartItemRepository.findByOwnerLoginAndCartItemId(
+                ownerLogin,
+                cartItemId).orElseThrow(
+                        () -> new ResourceNotFoundException("Not found CartItem of user " + ownerLogin + " with id = " + cartItemId)
+        );
+        CartItemDto cartItemDto = mapper.map(cartItem, CartItemDto.class);
         return cartItemDto;
     }
 }

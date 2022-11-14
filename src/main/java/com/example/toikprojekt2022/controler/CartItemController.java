@@ -23,6 +23,11 @@ public class CartItemController {
         return new ResponseEntity(cartItemService.findCartItemsByOwnersLogin(login), HttpStatus.OK);
     }
 
+    @GetMapping("{login}/usercart/{cartItemId}")
+    public ResponseEntity<CartItemDto> getUserCartItemByUserAndCartItemId(@PathVariable String login, @PathVariable UUID cartItemId){
+        return new ResponseEntity(cartItemService.findUserCartItemById(login,cartItemId), HttpStatus.OK);
+    }
+
     @PostMapping("{login}/usercart/{dishId}/save/{count}")
     public ResponseEntity<CartItemDto> upsertCartItem(@PathVariable String login, @PathVariable UUID dishId, @PathVariable int count){
         CartItemDto cartItemDto = cartItemService.upsertCartItem(login,dishId,count);
