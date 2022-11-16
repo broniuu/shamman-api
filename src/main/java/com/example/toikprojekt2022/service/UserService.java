@@ -44,9 +44,19 @@ public class UserService implements IUserService{
 
     @Override
     public User deleteUserAccount(String login) {
-        User user = userRepository.findByLogin(login);
-        userRepository.delete(user);
-        return user;
+        User userToDelete = userRepository.findByLogin(login);
+        userRepository.delete(userToDelete);
+        return userToDelete;
+    }
+
+    @Override
+    public User updateUserAccount(String login, UserDto userDto) {
+        return null;
+    }
+
+    @Override
+    public User showUserAccount(String login) {
+        return userRepository.findByLogin(login);
     }
 
     private boolean emailExists(String email) {

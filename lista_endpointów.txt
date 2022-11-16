@@ -25,9 +25,9 @@ Filip:
 	/usercart/delete
 	/usercart
 Kuba:
-	/user/delete/{login}
-	/user/update/{login}
-	/user/{login}
+	{login}/user/delete
+	{login}/user/update
+	{login}/user
 	/restaurants
 Kamil:
 	/login
