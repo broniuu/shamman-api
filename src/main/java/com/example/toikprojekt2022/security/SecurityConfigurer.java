@@ -1,6 +1,8 @@
 package com.example.toikprojekt2022.security;
 
+import com.example.toikprojekt2022.repository.UserRepository;
 import com.example.toikprojekt2022.service.MyUserDetailsService;
+import com.example.toikprojekt2022.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
+    UserRepository userRepository;
     @Autowired
     private AuthenticationEntryPoint authEntryPoint;
 
@@ -51,12 +54,12 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/register").permitAll()
-                .antMatchers("/restaurants").authenticated()
+                .antMatchers("/**/Restaurants/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
                 .usernameParameter("login")
-                .defaultSuccessUrl("/restaurants").and().httpBasic().authenticationEntryPoint(authEntryPoint).and().csrf().disable();
+                .defaultSuccessUrl("/restaurants").and().httpBasic().authenticationEntryPoint(AuthenticationEntryPoint);
 
     }
 
