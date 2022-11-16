@@ -3,6 +3,7 @@ package com.example.toikprojekt2022.controler;
 import com.example.toikprojekt2022.dto.CartItemDto;
 import com.example.toikprojekt2022.repository.CartItemRepository;
 import com.example.toikprojekt2022.service.ICartItemService;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

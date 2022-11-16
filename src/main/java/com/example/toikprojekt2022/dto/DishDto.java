@@ -4,6 +4,7 @@ import com.example.toikprojekt2022.model.CartItem;
 import com.example.toikprojekt2022.model.Restaurant;
 
 import javax.persistence.*;
+import java.text.Normalizer;
 import java.util.UUID;
 
 public class DishDto {
@@ -12,6 +13,7 @@ public class DishDto {
     private String description;
     private Double price;
     private String imageUrl;
+
 
     public UUID getDishId() {
         return dishId;
@@ -52,4 +54,5 @@ public class DishDto {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
 }

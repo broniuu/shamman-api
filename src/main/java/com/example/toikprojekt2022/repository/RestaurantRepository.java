@@ -7,10 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface RestaurantRepository extends CrudRepository<Restaurant, UUID> {
     @Query("SELECT r FROM Restaurant r WHERE r.name = ?1")
-    Restaurant findByName(String name);
+    Optional<Restaurant> findByName(String name);
 }
