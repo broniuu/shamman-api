@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -51,7 +50,22 @@ public class UserService implements IUserService{
 
     @Override
     public User updateUserAccount(String login, UserDto userDto) {
-        return null;
+        User userToUpdate = userRepository.findByLogin(login);
+        changeUserDtoToUser(userDto, userToUpdate);
+        userRepository.save(userToUpdate);
+        return userToUpdate;
+    }
+
+    private void changeUserDtoToUser(UserDto userDto, User userToUpdate) {
+        userToUpdate.setLogin(userDto.getLogin());
+        encodePassword(userToUpdate, userDto);
+        userToUpdate.setName(userDto.getName());
+        userToUpdate.setSurname(userDto.getSurname());
+        userToUpdate.setAddress(userDto.getAddress());
+        userToUpdate.setDebitCardNumber(userDto.getDebitCardNumber());
+        userToUpdate.setExpireDate(userDto.getExpireDate());
+        userToUpdate.setCvv(userDto.getCvv());
+        userToUpdate.setEmail(userDto.getEmail());
     }
 
     @Override

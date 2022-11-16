@@ -27,11 +27,11 @@ public class UserController {
         User deleted = userService.deleteUserAccount(login);
         return new ResponseEntity<>(deleted, HttpStatus.OK);
     }
-//    @PostMapping(value = "{login}/user/update")
-//    public ResponseEntity<User> updateUserAccount(@PathVariable String login, @RequestBody UserDto userDto) {
-//        User updated = userService.updateUserAccount(login, userDto);
-//        return new ResponseEntity<>(updated, HttpStatus.OK);
-//    }
+    @PostMapping(value = "{login}/user/update")
+    public ResponseEntity<User> updateUserAccount(@PathVariable String login, @RequestBody UserDto userDto) {
+        User updated = userService.updateUserAccount(login, userDto);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
+    }
     @GetMapping(value = "{login}/user")
     public ResponseEntity<User> showUserAccount(@PathVariable String login) {
         User shown = userService.showUserAccount(login);
