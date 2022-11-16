@@ -5,4 +5,5 @@ import com.example.toikprojekt2022.model.User;
 
 public interface IUserService {
     User registerNewUserAccount(UserDto userDto);
+    User deleteUserAccount(String login);
 }

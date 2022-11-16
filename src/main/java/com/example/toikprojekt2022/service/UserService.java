@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -40,6 +41,14 @@ public class UserService implements IUserService{
         encodePassword(userToRegister, userDto);
         return userRepository.save(userToRegister);
     }
+
+    @Override
+    public User deleteUserAccount(String login) {
+        User user = userRepository.findByLogin(login);
+        userRepository.delete(user);
+        return user;
+    }
+
     private boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;
     }
