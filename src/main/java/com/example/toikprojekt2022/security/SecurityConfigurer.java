@@ -1,32 +1,39 @@
 package com.example.toikprojekt2022.security;
 
-import com.example.toikprojekt2022.repository.UserRepository;
+
 import com.example.toikprojekt2022.service.MyUserDetailsService;
-import com.example.toikprojekt2022.service.UserService;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
-import javax.transaction.UserTransaction;
+
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
+public class SecurityConfigurer  {
 
-    @Autowired
-    private AuthenticationEntryPoint authEntryPoint;
 
     @Autowired
     private DataSource dataSource;
@@ -49,34 +56,50 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         return authProvider;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
-    }
-    public String getName(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
+    private RSAKey rsaKey;
+
+    @Bean
+    public AuthenticationManager authManager(UserDetailsService userDetailsService) {
+        var authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        return new ProviderManager(authProvider);
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        http.authorizeRequests()
-                .antMatchers("/user/registration").permitAll()
-                .antMatchers("/restaurants/**").permitAll()
-                .anyRequest().permitAll()
-                .and()
-                .formLogin()
-                .usernameParameter("login")
-                .defaultSuccessUrl("/restaurants")
-                .and().
-                httpBasic().
-                authenticationEntryPoint(authEntryPoint)
-                .and()
-                .csrf()
-                .disable();
 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeRequests( auth -> auth
+                        .mvcMatchers("/user/**").permitAll()
+                        .mvcMatchers("**/usercart/**").authenticated()
+                        .mvcMatchers("/restaurants/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .build();
     }
+
+    @Bean
+    public JWKSource<SecurityContext> jwkSource() {
+        rsaKey = Jwks.generateRsa();
+        JWKSet jwkSet = new JWKSet(rsaKey);
+        return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
+    }
+
+    @Bean
+    JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwks) {
+        return new NimbusJwtEncoder(jwks);
+    }
+
+    @Bean
+    JwtDecoder jwtDecoder() throws JOSEException {
+        return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+    }
+
+
+
 
 }
 
