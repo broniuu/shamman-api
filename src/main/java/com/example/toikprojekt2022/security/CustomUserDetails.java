@@ -1,12 +1,16 @@
 package com.example.toikprojekt2022.security;
 
+import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.model.User;
+import com.example.toikprojekt2022.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collection;
 public class CustomUserDetails implements UserDetails {
-
+    UserService service;
+    PasswordEncoder passwordEncoder;
     private final User user;
 
     public CustomUserDetails(User user) {
@@ -18,9 +22,10 @@ public class CustomUserDetails implements UserDetails {
         return null;
     }
 
+
     @Override
     public String getPassword() {
-        return ("{noop}"+user.getPassword());
+        return (  user.getPassword());
     }
 
     @Override
