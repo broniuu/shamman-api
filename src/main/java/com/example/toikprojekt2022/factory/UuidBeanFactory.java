@@ -1,4 +1,4 @@
-package com.example.toikprojekt2022.extension;
+package com.example.toikprojekt2022.factory;
 
 import java.util.UUID;
 import org.dozer.BeanFactory;

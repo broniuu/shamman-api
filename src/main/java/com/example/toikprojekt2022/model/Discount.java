@@ -1,8 +1,10 @@
 package com.example.toikprojekt2022.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.UUID;
-
+@Data
 @Entity
 public class Discount {
     @Id
