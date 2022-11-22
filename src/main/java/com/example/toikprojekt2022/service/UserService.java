@@ -2,6 +2,7 @@ package com.example.toikprojekt2022.service;
 
 import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.exception.UserAlreadyExistException;
+import com.example.toikprojekt2022.exception.UserNotFoundException;
 import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.repository.UserRepository;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -44,6 +45,10 @@ public class UserService implements IUserService{
     @Override
     public User deleteUserAccount(String login) {
         User userToDelete = userRepository.findByLogin(login);
+        if (userToDelete == null) {
+            throw new UserNotFoundException("There is no user with that login: "
+                    + login);
+        }
         userRepository.delete(userToDelete);
         return userToDelete;
     }
@@ -51,6 +56,10 @@ public class UserService implements IUserService{
     @Override
     public User updateUserAccount(String login, UserDto userDto) {
         User userToUpdate = userRepository.findByLogin(login);
+        if (userToUpdate == null) {
+            throw new UserNotFoundException("There is no user with that login: "
+                    + login);
+        }
         changeUserDtoToUser(userDto, userToUpdate);
         userRepository.save(userToUpdate);
         return userToUpdate;
@@ -70,6 +79,10 @@ public class UserService implements IUserService{
 
     @Override
     public User showUserAccount(String login) {
+        if (userRepository.findByLogin(login) == null) {
+            throw new UserNotFoundException("There is no user with that login: "
+                    + login);
+        }
         return userRepository.findByLogin(login);
     }
 
