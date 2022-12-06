@@ -1,13 +1,7 @@
 package com.example.toikprojekt2022.data;
 
-import com.example.toikprojekt2022.model.CartItem;
-import com.example.toikprojekt2022.model.Dish;
-import com.example.toikprojekt2022.model.Restaurant;
-import com.example.toikprojekt2022.model.User;
-import com.example.toikprojekt2022.repository.CartItemRepository;
-import com.example.toikprojekt2022.repository.DishRepository;
-import com.example.toikprojekt2022.repository.RestaurantRepository;
-import com.example.toikprojekt2022.repository.UserRepository;
+import com.example.toikprojekt2022.model.*;
+import com.example.toikprojekt2022.repository.*;
 
 import java.util.List;
 
@@ -16,17 +10,19 @@ public class Seed {
     public Seed(UserRepository userRepository,
                 RestaurantRepository restaurantRepository,
                 CartItemRepository cartItemRepository,
-                DishRepository dishRepository) {
+                DishRepository dishRepository, DiscountRepository discountRepository) {
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
         this.cartItemRepository = cartItemRepository;
         this.dishRepository = dishRepository;
+        this.discountRepository = discountRepository;
     }
 
     private UserRepository userRepository;
     private RestaurantRepository restaurantRepository;
     private CartItemRepository cartItemRepository;
     private DishRepository dishRepository;
+    private DiscountRepository discountRepository;
 
     public void seedData() {
         List<Restaurant> restaurants;
@@ -46,6 +42,7 @@ public class Seed {
         } else {
             restaurants = (List<Restaurant>) restaurantRepository.findAll();
         }
+        List<Dish> dishes;
         if (dishRepository.count() == 0) {
             Restaurant firstRestaurant = restaurants.get(0);
             Restaurant secondRestaurant = restaurants.get(1);
@@ -55,7 +52,7 @@ public class Seed {
             Restaurant sixthRestaurant = restaurants.get(5);
             Restaurant seventhRestaurant = restaurants.get(6);
             Restaurant eighthRestaurant = restaurants.get(7);
-            List<Dish> dishes = List.of(
+            dishes = List.of(
                     new Dish(
                             "STEK Z POLĘDWICY WOŁOWEJ",
                             "warzywami pieczonymi w miodzie, z sosem pieprzowym",
@@ -898,7 +895,19 @@ public class Seed {
                     )
             );
             dishRepository.saveAll(dishes);
+        } else {
+          dishes = (List<Dish>) dishRepository.findAll();
         }
-
+        if (discountRepository.count() == 0){
+            List<Discount> discounts = List.of(
+                    new Discount(dishes.get(3), 0.4),
+                    new Discount(dishes.get(5), 0.22),
+                    new Discount(dishes.get(7), 0.45),
+                    new Discount(dishes.get(8), 0.75),
+                    new Discount(dishes.get(9), 0.22),
+                    new Discount(dishes.get(22), 0.6)
+            );
+            discountRepository.saveAll(discounts);
+        }
     }
 }

@@ -73,7 +73,7 @@ public class SecurityConfigurer  {
                 .authorizeRequests( auth -> auth
                         .mvcMatchers("/user/**").permitAll()
                         .mvcMatchers("**/usercart/**").authenticated()
-                        .mvcMatchers("/restaurants/**").permitAll()
+                        .mvcMatchers("/restaurants/**","/discounts/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
