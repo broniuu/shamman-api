@@ -2,6 +2,7 @@ package com.example.toikprojekt2022.service;
 
 import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.exception.UserAlreadyExistException;
+import com.example.toikprojekt2022.exception.UserNotFoundException;
 import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.repository.UserRepository;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -40,6 +41,51 @@ public class UserService implements IUserService{
         encodePassword(userToRegister, userDto);
         return userRepository.save(userToRegister);
     }
+
+    @Override
+    public User deleteUserAccount(String login) {
+        User userToDelete = userRepository.findByLogin(login);
+        if (userToDelete == null) {
+            throw new UserNotFoundException("There is no user with that login: "
+                    + login);
+        }
+        userRepository.delete(userToDelete);
+        return userToDelete;
+    }
+
+    @Override
+    public User updateUserAccount(String login, UserDto userDto) {
+        User userToUpdate = userRepository.findByLogin(login);
+        if (userToUpdate == null) {
+            throw new UserNotFoundException("There is no user with that login: "
+                    + login);
+        }
+        changeUserDtoToUser(userDto, userToUpdate);
+        userRepository.save(userToUpdate);
+        return userToUpdate;
+    }
+
+    private void changeUserDtoToUser(UserDto userDto, User userToUpdate) {
+        userToUpdate.setLogin(userDto.getLogin());
+        encodePassword(userToUpdate, userDto);
+        userToUpdate.setName(userDto.getName());
+        userToUpdate.setSurname(userDto.getSurname());
+        userToUpdate.setAddress(userDto.getAddress());
+        userToUpdate.setDebitCardNumber(userDto.getDebitCardNumber());
+        userToUpdate.setExpireDate(userDto.getExpireDate());
+        userToUpdate.setCvv(userDto.getCvv());
+        userToUpdate.setEmail(userDto.getEmail());
+    }
+
+    @Override
+    public User showUserAccount(String login) {
+        if (userRepository.findByLogin(login) == null) {
+            throw new UserNotFoundException("There is no user with that login: "
+                    + login);
+        }
+        return userRepository.findByLogin(login);
+    }
+
     private boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;
     }
