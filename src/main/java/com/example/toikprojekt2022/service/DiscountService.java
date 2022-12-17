@@ -6,6 +6,10 @@ import com.example.toikprojekt2022.extension.DiscountExtension;
 import com.example.toikprojekt2022.model.Discount;
 import com.example.toikprojekt2022.repository.DiscountRepository;
 import lombok.experimental.ExtensionMethod;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -19,8 +23,17 @@ public class DiscountService implements IDiscountService {
 
     @Override
     public List<DiscountDto> findDiscountDtos() {
+        return null;
+    }
+    @Override
+    public Page<DiscountDto> findDiscountDtos(int pageNumber) {
+        final int pageSize = 10;
         List<Discount> discounts = (List<Discount>) discountRepository.findAll();
-        if (discounts.isEmpty()) throw new DishNotFoundException("There is no Dishes for this Restaurant. Your Restaurant ID may be wrong");
-        return discounts.stream().map(discount -> discount.toDiscountDto()).toList();
+        int discountsTotal = discounts.size();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Discount> discountPage = new PageImpl<>(discounts,pageable,discountsTotal);
+        if (discounts.isEmpty() || discountPage.getTotalElements() > discountsTotal)
+            throw new DishNotFoundException("There is no discounts on this page");
+        return discountPage.map(discount -> discount.toDiscountDto());
     }
 }
