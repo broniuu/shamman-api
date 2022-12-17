@@ -35,7 +35,8 @@ public class UserController {
     }
     @PostMapping(value ="/user/login")
     public String token(@RequestBody LoginRequest userLogin) throws AuthenticationException {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.login(), userLogin.password()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userLogin.login(), userLogin.password()));
         return tokenService.generateToken(authentication);
     }
     @DeleteMapping(value = "{login}/user/delete")
@@ -52,10 +53,5 @@ public class UserController {
     public ResponseEntity<User> showUserAccount(@PathVariable String login) {
         User shown = userService.showUserAccount(login);
         return new ResponseEntity<>(shown, HttpStatus.OK);
-    }
-    @PostMapping(value ="/user/login")
-    public String token(@RequestBody LoginRequest userLogin) throws AuthenticationException {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.username(), userLogin.password()));
-        return tokenService.generateToken(authentication);
     }
 }
