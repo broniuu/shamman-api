@@ -5,6 +5,7 @@ import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.repository.UserRepository;
 import com.example.toikprojekt2022.service.IUserService;
+import com.example.toikprojekt2022.service.TokenService;
 import com.example.toikprojekt2022.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +29,13 @@ public class UserController {
     @PostMapping(value ="/user/registration")
     public ResponseEntity<User> registerUserAccount(@RequestBody UserDto userDto) throws RuntimeException {
         User registered = userService.registerNewUserAccount(userDto);
+
         return new ResponseEntity<>(registered, HttpStatus.OK);
+    }
+    @PostMapping(value ="/user/login")
+    public String token(@RequestBody LoginRequest userLogin) throws AuthenticationException {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.login(), userLogin.password()));
+        return tokenService.generateToken(authentication);
     }
     @DeleteMapping(value = "{login}/user/delete")
     public ResponseEntity<User> deleteUserAccount(@PathVariable String login) {

@@ -906,7 +906,9 @@ public class Seed {
                     new Discount(dishes.get(8), 0.75),
                     new Discount(dishes.get(9), 0.22),
                     new Discount(dishes.get(22), 0.6)
+
             );
+
             discountRepository.saveAll(discounts);
         }
     }
