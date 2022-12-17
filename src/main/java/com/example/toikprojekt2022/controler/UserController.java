@@ -5,6 +5,7 @@ import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.repository.UserRepository;
 import com.example.toikprojekt2022.service.IUserService;
+import com.example.toikprojekt2022.service.TokenService;
 import com.example.toikprojekt2022.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +26,7 @@ public class UserController {
         this.authenticationManager = authenticationManager;
         this.userService = new UserService(userRepository, passwordEncoder);
     }
+
     @PostMapping(value ="/user/registration")
     public ResponseEntity<User> registerUserAccount(@RequestBody UserDto userDto) throws RuntimeException {
         User registered = userService.registerNewUserAccount(userDto);
@@ -44,5 +46,10 @@ public class UserController {
     public ResponseEntity<User> showUserAccount(@PathVariable String login) {
         User shown = userService.showUserAccount(login);
         return new ResponseEntity<>(shown, HttpStatus.OK);
+    }
+    @PostMapping(value ="/user/login")
+    public String token(@RequestBody LoginRequest userLogin) throws AuthenticationException {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.username(), userLogin.password()));
+        return tokenService.generateToken(authentication);
     }
 }

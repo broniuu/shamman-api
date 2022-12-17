@@ -3,7 +3,7 @@ package com.example.toikprojekt2022.controler;
 import com.example.toikprojekt2022.dto.CartItemDto;
 import com.example.toikprojekt2022.repository.CartItemRepository;
 import com.example.toikprojekt2022.service.ICartItemService;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +19,12 @@ public class CartItemController {
         this.cartItemService = cartItemService;
     }
 
-    @GetMapping("{login}/usercart")
-    public ResponseEntity<Iterable<CartItemDto>> getCartItemsByUser(@PathVariable String login){
-        return new ResponseEntity(cartItemService.findCartItemsByOwnersLogin(login), HttpStatus.OK);
+    @GetMapping(value = "{login}/usercart", params = {"p"})
+    public ResponseEntity<Iterable<CartItemDto>> getCartItemsByUser(
+            @PathVariable String login,
+            @RequestParam("p") int pageNumber){
+        Page<CartItemDto> resultPage = cartItemService.findPaginatedCartItemsByOwnersLogin(login, pageNumber);
+        return new ResponseEntity(resultPage, HttpStatus.OK);
     }
 
     @GetMapping("{login}/usercart/{cartItemId}")
