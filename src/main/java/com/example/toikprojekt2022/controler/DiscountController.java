@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 public class DiscountController {
     private final DiscountService discountService;
-
     public DiscountController(DiscountRepository discountRepository) {
         this.discountService = new DiscountService(discountRepository);
     }

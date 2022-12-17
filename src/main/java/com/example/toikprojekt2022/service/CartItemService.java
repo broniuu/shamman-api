@@ -85,8 +85,11 @@ public class CartItemService implements ICartItemService {
     public Page<CartItemDto> findPaginatedCartItemsByOwnersLogin(String login, int pageNumber) {
         final int pageSize = 10;
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<CartItem> cartItems = cartItemRepository.findAllByCartOwnerLogin(login, pageable);
-        if (cartItems.isEmpty()) throw new ResourceNotFoundException("Not found CartItems of user " + login);
+        UUID userId = userRepository.findUserIdByLogin(login);
+        int cartItemsCount = cartItemRepository.countByCartOwnerId(userId);
+        Page<CartItem> cartItems = cartItemRepository.findAllByCartOwnerId(userId, pageable);
+        if (cartItems.isEmpty() || cartItems.getTotalElements() > cartItemsCount)
+            throw new ResourceNotFoundException("Not found CartItems of user " + login + "on this page");
         return cartItems.map(x -> mapper.map(x, CartItemDto.class));
     }
 }
