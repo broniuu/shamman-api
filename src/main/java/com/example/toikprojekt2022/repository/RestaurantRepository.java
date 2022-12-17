@@ -14,4 +14,6 @@ import java.util.UUID;
 public interface RestaurantRepository extends CrudRepository<Restaurant, UUID> {
     @Query("SELECT r FROM Restaurant r WHERE r.name = ?1")
     Optional<Restaurant> findByName(String name);
+    @Query("SELECT r.restaurantId FROM Restaurant r WHERE r.name = ?1")
+    UUID findRestaurantIdByName(String name);
 }

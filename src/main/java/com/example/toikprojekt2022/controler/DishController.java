@@ -4,10 +4,15 @@ import com.example.toikprojekt2022.dto.DishDto;
 import com.example.toikprojekt2022.repository.RestaurantRepository;
 import com.example.toikprojekt2022.service.DishService;
 import com.example.toikprojekt2022.service.IRestaurantService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -23,13 +28,19 @@ public class DishController {
         this.dishService = dishService;
     }
 
-    @GetMapping("/restaurants/{restaurantName}/dishes")
-    public ResponseEntity<Iterable<DishDto>> getDishesByRestaurantName( @PathVariable String restaurantName){
+    @GetMapping(value = "/restaurants/{restaurantName}/dishes", params = {"p"})
+    public ResponseEntity<Iterable<DishDto>> getDishesByRestaurantName(
+            @PathVariable String restaurantName,
+            @RequestParam(value = "p", defaultValue = "0") int pageNumber){
+
         restaurantName= restaurantName.replaceAll("_"," ");
-        return new ResponseEntity(dishService.findByRestaurantId(restaurantsService.findRestaurantByName(restaurantName).getRestaurantId()), HttpStatus.OK);
+        Page<DishDto> dishDtos = dishService.findDishesByRestaurantName(restaurantName, pageNumber);
+        return new ResponseEntity(dishDtos, HttpStatus.OK);
     }
     @GetMapping("/restaurants/{restaurantName}/dishes/{dishName}")
-    public ResponseEntity<DishDto> getDishesByRestaurantName( @PathVariable String restaurantName,@PathVariable String dishName){
+    public ResponseEntity<DishDto> getDishesByRestaurantName(
+            @PathVariable String restaurantName,
+            @PathVariable String dishName){
         restaurantName= restaurantName.replaceAll("_"," ");
         dishName=dishName.replaceAll("_"," ");
         UUID id=restaurantsService.findRestaurantByName(restaurantName).getRestaurantId();
