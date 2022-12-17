@@ -11,7 +11,6 @@ import java.util.UUID;
 public interface UserRepository extends CrudRepository<User, UUID> {
     @Query("SELECT u FROM User u WHERE u.login = ?1")
     User findByLogin(String login);
-
     @Query("SELECT u FROM User u WHERE u.email = ?1")
     User findByEmail(String email);
     @Query("SELECT u.userId FROM User u WHERE u.login = ?1")

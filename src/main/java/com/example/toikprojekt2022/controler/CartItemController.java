@@ -3,6 +3,7 @@ package com.example.toikprojekt2022.controler;
 import com.example.toikprojekt2022.dto.CartItemDto;
 import com.example.toikprojekt2022.repository.CartItemRepository;
 import com.example.toikprojekt2022.service.ICartItemService;
+import org.springframework.data.domain.Page;
 import com.example.toikprojekt2022.service.UserService;
 import com.google.zxing.WriterException;
 import org.springframework.http.HttpStatus;
@@ -26,9 +27,12 @@ public class CartItemController {
         this.userService=userService;
     }
 
-    @GetMapping("{login}/usercart")
-    public ResponseEntity<Iterable<CartItemDto>> getCartItemsByUser(@PathVariable String login){
-        return new ResponseEntity(cartItemService.findCartItemsByOwnersLogin(login), HttpStatus.OK);
+    @GetMapping(value = "{login}/usercart", params = {"p"})
+    public ResponseEntity<Iterable<CartItemDto>> getCartItemsByUser(
+            @PathVariable String login,
+            @RequestParam("p") int pageNumber){
+        Page<CartItemDto> resultPage = cartItemService.findPaginatedCartItemsByOwnersLogin(login, pageNumber);
+        return new ResponseEntity(resultPage, HttpStatus.OK);
     }
 
     @GetMapping("{login}/usercart/{cartItemId}")

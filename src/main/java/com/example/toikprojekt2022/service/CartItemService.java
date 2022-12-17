@@ -10,8 +10,13 @@ import com.example.toikprojekt2022.repository.DishRepository;
 import com.example.toikprojekt2022.repository.UserRepository;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,15 +37,8 @@ public class CartItemService implements ICartItemService {
     }
 
     @Override
-    public Iterable<CartItemDto> findCartItemsByOwnersLogin(String login) throws ResourceNotFoundException {
-        List<CartItem> cartItems = (List<CartItem>) cartItemRepository.findAllByCartOwnerLogin(login);
-        if (cartItems.isEmpty()) throw new ResourceNotFoundException("Not found CartItems of user " + login);
-        List<CartItemDto> cartItemDtos = new ArrayList<>();
-        for(CartItem cartItem : cartItems){
-            CartItemDto cartItemDto = mapper.map(cartItem, CartItemDto.class);
-            cartItemDtos.add(cartItemDto);
-        }
-        return cartItemDtos;
+    public Iterable<CartItemDto> findCartItemsByOwnersLogin(String login) {
+        return null;
     }
 
     @Override
@@ -81,5 +79,17 @@ public class CartItemService implements ICartItemService {
         );
         CartItemDto cartItemDto = mapper.map(cartItem, CartItemDto.class);
         return cartItemDto;
+    }
+
+    @Override
+    public Page<CartItemDto> findPaginatedCartItemsByOwnersLogin(String login, int pageNumber) {
+        final int pageSize = 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        UUID userId = userRepository.findUserIdByLogin(login);
+        int cartItemsCount = cartItemRepository.countByCartOwnerId(userId);
+        Page<CartItem> cartItems = cartItemRepository.findAllByCartOwnerId(userId, pageable);
+        if (cartItems.isEmpty() || cartItems.getTotalElements() > cartItemsCount)
+            throw new ResourceNotFoundException("Not found CartItems of user " + login + "on this page");
+        return cartItems.map(x -> mapper.map(x, CartItemDto.class));
     }
 }
