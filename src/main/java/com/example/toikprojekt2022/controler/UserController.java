@@ -30,7 +30,13 @@ public class UserController {
     @PostMapping(value ="/user/registration")
     public ResponseEntity<User> registerUserAccount(@RequestBody UserDto userDto) throws RuntimeException {
         User registered = userService.registerNewUserAccount(userDto);
+
         return new ResponseEntity<>(registered, HttpStatus.OK);
+    }
+    @PostMapping(value ="/user/login")
+    public String token(@RequestBody LoginRequest userLogin) throws AuthenticationException {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.login(), userLogin.password()));
+        return tokenService.generateToken(authentication);
     }
     @DeleteMapping(value = "{login}/user/delete")
     public ResponseEntity<User> deleteUserAccount(@PathVariable String login) {
