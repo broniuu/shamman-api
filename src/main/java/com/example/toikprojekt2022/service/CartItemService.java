@@ -3,20 +3,20 @@ package com.example.toikprojekt2022.service;
 import com.example.toikprojekt2022.dto.CartItemDto;
 import com.example.toikprojekt2022.exception.ResourceNotFoundException;
 import com.example.toikprojekt2022.model.CartItem;
+import com.example.toikprojekt2022.model.Discount;
 import com.example.toikprojekt2022.model.Dish;
 import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.repository.CartItemRepository;
+import com.example.toikprojekt2022.repository.DiscountRepository;
 import com.example.toikprojekt2022.repository.DishRepository;
 import com.example.toikprojekt2022.repository.UserRepository;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,20 +28,34 @@ public class CartItemService implements ICartItemService {
     private final DishRepository dishRepository;
     private final UserRepository userRepository;
     private final Mapper mapper;
+    private  final DiscountRepository discountRepository;
 
-    public CartItemService(CartItemRepository cartItemRepository, DishRepository dishRepository, UserRepository userRepository) {
+    public CartItemService(CartItemRepository cartItemRepository, DishRepository dishRepository, UserRepository userRepository, DiscountRepository discountRepository) {
         this.cartItemRepository = cartItemRepository;
         this.dishRepository = dishRepository;
         this.userRepository = userRepository;
+        this.discountRepository = discountRepository;
         this.mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    }
+    private double calculatePriceWithDiscount(Discount discount){
+        double price = discount.getDish().getPrice();
+        double discountValue = discount.getDiscountValue();
+        return price - price*discountValue;
     }
 
     @Override
-    public Iterable<CartItemDto> findCartItemsByOwnersLogin(String login) throws ResourceNotFoundException {
+    public Iterable<CartItemDto> findCartItemsWithDiscountPriceByOwnersLogin(String login) throws ResourceNotFoundException {
         List<CartItem> cartItems = (List<CartItem>) cartItemRepository.findAllByCartOwnerLogin(login);
         if (cartItems.isEmpty()) throw new ResourceNotFoundException("Not found CartItems of user " + login);
         List<CartItemDto> cartItemDtos = new ArrayList<>();
         for(CartItem cartItem : cartItems){
+            Discount discount = discountRepository.findByDishId(cartItem.getDishId());
+            if (discount != null) {
+                Dish dish = cartItem.getDish();
+                double priceWithDiscount = calculatePriceWithDiscount(discount);
+                dish.setPrice(priceWithDiscount);
+                cartItem.setDish(dish);
+            }
             CartItemDto cartItemDto = mapper.map(cartItem, CartItemDto.class);
             cartItemDtos.add(cartItemDto);
         }
