@@ -23,7 +23,7 @@ public class CartItemController {
 
     private final ICartItemService cartItemService;
     private final UserService userService;
-    public CartItemController(ICartItemService cartItemService, CartItemRepository cartItemRepository,UserService userService) {
+    public CartItemController(ICartItemService cartItemService,UserService userService) {
         this.cartItemService = cartItemService;
         this.userService=userService;
     }
@@ -53,7 +53,7 @@ public class CartItemController {
     }
     @GetMapping ("{login}/usercart/checkout")
     public ResponseEntity<String> checkout(@PathVariable String login) throws IOException, WriterException {
-        Iterable<CartItemDto> ci = cartItemService.findCartItemsByOwnersLogin(login);
+        Iterable<CartItemDto> ci = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);
         if (ci == null)
             throw new ResourceNotFoundException("The usercart is empty!");
         List<CartItemDto> cartitems = StreamSupport.stream(ci.spliterator(), false).toList();
