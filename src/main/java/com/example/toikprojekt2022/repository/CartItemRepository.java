@@ -16,6 +16,8 @@ import java.util.UUID;
 
 @Repository
 public interface CartItemRepository extends PagingAndSortingRepository<CartItem, UUID> {
+    @Query("SELECT ci FROM CartItem ci INNER join User u ON u.userId = ci.cartOwnerId  WHERE u.login = ?1")
+    Iterable<CartItem> findAllByCartOwnerLogin(String login);
     @Query("SELECT ci FROM CartItem ci WHERE ci.cartOwnerId = ?1")
     Page<CartItem> findAllByCartOwnerId(UUID cartOwnerId, Pageable pageable);
     int countByCartOwnerId(UUID cartOwnerId);

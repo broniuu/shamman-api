@@ -1,6 +1,7 @@
 package com.example.toikprojekt2022.controler;
 
 import com.example.toikprojekt2022.dto.CartItemDto;
+import com.example.toikprojekt2022.exception.ResourceNotFoundException;
 import com.example.toikprojekt2022.repository.CartItemRepository;
 import com.example.toikprojekt2022.service.ICartItemService;
 import org.springframework.data.domain.Page;
@@ -51,12 +52,14 @@ public class CartItemController {
         return new ResponseEntity(cartItemDto, HttpStatus.OK);
     }
     @GetMapping ("{login}/usercart/checkout")
-    public void checkout(@PathVariable String login) throws IOException, WriterException {
-        Iterable<CartItemDto> ci=cartItemService.findCartItemsByOwnersLogin(login);
-        List<CartItemDto> cartitems= StreamSupport.stream(ci.spliterator(), false).toList();
+    public ResponseEntity<String> checkout(@PathVariable String login) throws IOException, WriterException {
+        Iterable<CartItemDto> ci = cartItemService.findCartItemsByOwnersLogin(login);
+        if (ci == null)
+            throw new ResourceNotFoundException("The usercart is empty!");
+        List<CartItemDto> cartitems = StreamSupport.stream(ci.spliterator(), false).toList();
         makePdf(userService.showUserAccount(login),cartitems, true,"test");
         cartitems.forEach((cartItem) ->cartItemService.deleteCartItem(login,cartItem.getCartItemId()));
-
+        return new ResponseEntity<>("Transaction ended succesfuly!", HttpStatus.OK);
     }
 
 }
