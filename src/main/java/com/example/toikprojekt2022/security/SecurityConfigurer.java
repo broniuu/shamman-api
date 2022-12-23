@@ -50,6 +50,7 @@ public class SecurityConfigurer  {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
 
@@ -72,6 +73,7 @@ public class SecurityConfigurer  {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests( auth -> auth
                         .mvcMatchers("/user/**").permitAll()
+                        .mvcMatchers("**/logout").authenticated()
                         .mvcMatchers("**/usercart/**").authenticated()
                         .mvcMatchers("/restaurants/**","/discounts/**").permitAll()
                         .anyRequest().authenticated()
