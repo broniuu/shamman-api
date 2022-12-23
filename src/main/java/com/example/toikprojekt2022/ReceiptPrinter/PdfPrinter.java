@@ -1,7 +1,6 @@
 package com.example.toikprojekt2022.ReceiptPrinter;
 
 import com.example.toikprojekt2022.dto.CartItemDto;
-import com.example.toikprojekt2022.model.CartItem;
 import com.example.toikprojekt2022.model.User;
 import com.google.zxing.WriterException;
 import com.itextpdf.io.image.ImageData;
@@ -18,7 +17,10 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.HorizontalAlignment;
 
-import java.io.File;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
@@ -33,19 +35,21 @@ import static com.itextpdf.kernel.geom.PageSize.A4;
  */
 public class PdfPrinter {
     /**
-     *
      * Make pdf - funkcja tworzaca i zapisujaca pdf
      *
      * @param currentUser obecny uzytkownik
-     * @param cartItems  przedmioty ktore znajdowaly sie w koszyku
-     * @param delivery  boolean dzieki ktoremu wiemy czy kupujacy wykupil dostawe
-     * @param note  notatka
-     * @throws   IOException
-     * @throws  WriterException
+     * @param cartItems   przedmioty ktore znajdowaly sie w koszyku
+     * @param delivery    boolean dzieki ktoremu wiemy czy kupujacy wykupil dostawe
+     * @param note        notatka
+     * @return
+     * @throws IOException
+     * @throws WriterException
      */
-    public static void makePdf(User currentUser, List<CartItemDto> cartItems, boolean delivery, String note) throws IOException, WriterException {
+    public static ByteArrayOutputStream makePdf(User currentUser, List<CartItemDto> cartItems, boolean delivery, String note) throws IOException, WriterException {
+        String filename= "Rachunek.pdf";
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        PdfWriter pdfWriter=new PdfWriter(new File("./plik.pdf").getCanonicalPath());
+        PdfWriter pdfWriter=new PdfWriter(byteArrayOutputStream);
         Random random=new Random();
         long nr= random.nextInt(123);
         com.itextpdf.layout.element.List orders=new com.itextpdf.layout.element.List();
@@ -134,5 +138,15 @@ public class PdfPrinter {
         document.add(new Paragraph("\n"));
         document.add(summary);
         document.close();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=" + filename);
+        headers.setContentDispositionFormData(filename, filename);
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return byteArrayOutputStream;
+
+
     }
 }
