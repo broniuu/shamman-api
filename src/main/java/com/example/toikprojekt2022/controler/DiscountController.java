@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+/**
+ * Klasa obsługuje endpointy związane zniżkami
+ */
 @RestController
 public class DiscountController {
     private final DiscountService discountService;
@@ -19,6 +21,12 @@ public class DiscountController {
         this.discountService = new DiscountService(discountRepository);
     }
 
+    /**
+     * Zwraca listę zniżek
+     *
+     * @param pageNumber    numer obecnej strony
+     * @return              lista zniżek
+     */
     @GetMapping(value = "/discounts",params = {"p"})
     public ResponseEntity<Page<DiscountDto>> getDiscounts(
             @RequestParam(value = "p", defaultValue = "0") int pageNumber){
