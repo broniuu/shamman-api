@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Obsługuje operacje związane z pobieraniem, zapisywaniem i usówaniem dań z koszyka i przygotowaniem ich do wywietlenia
+ */
 @Service
 public class CartItemService implements ICartItemService {
 
@@ -43,6 +46,14 @@ public class CartItemService implements ICartItemService {
         return price - price*discountValue;
     }
 
+    /**
+     * Pobiera dania, do wyświetlenia, obliczając przy tym zniżkę
+     *
+     * @param login                         login właściela koszyka
+     * @return                              dania z koszyka
+     * @throws ResourceNotFoundException    wyjątek w przypadku braku produktów w koszyku
+     */
+
     @Override
     public Iterable<CartItemDto> findCartItemsWithDiscountPriceByOwnersLogin(String login) throws ResourceNotFoundException {
         List<CartItem> cartItems = (List<CartItem>) cartItemRepository.findAllByCartOwnerLogin(login);
@@ -62,6 +73,15 @@ public class CartItemService implements ICartItemService {
         return cartItemDtos;
     }
 
+    /**
+     * Dodaje danie do koszyka
+     *
+     * @param ownerLogin    login właściela koszyka
+     * @param dishId        ID dania dodanego do koszyka
+     * @param countOfDish   ilość sztuk dania do zapisania w koszyku
+     * @return              nowe danie z koszyka
+     */
+
     @Override
     public CartItemDto upsertCartItem(String ownerLogin, UUID dishId, int countOfDish) {
         CartItem cartItemWithTheSameDishId = cartItemRepository.findByOwnerLoginAndDishId(ownerLogin, dishId).orElse(null);
@@ -79,6 +99,14 @@ public class CartItemService implements ICartItemService {
         return cartItemDto;
     }
 
+    /**
+     * Usówa wszystkie sztuki dania z koszyka
+     *
+     * @param ownerLogin                    login właściciela koszyka
+     * @param cartItemId                    ID dania z koszyka
+     * @return                              usunięte danie z koszyka
+     * @throws ResourceNotFoundException    wyjątek w przypadku nie znaleznia podanego dania
+     */
     @Override
     public CartItemDto deleteCartItem(String ownerLogin, UUID cartItemId) throws ResourceNotFoundException {
         CartItem cartItemWithTheSameId = cartItemRepository.findByOwnerLoginAndCartItemId(
@@ -91,6 +119,14 @@ public class CartItemService implements ICartItemService {
         return cartItemDto;
     }
 
+    /**
+     * Zwraca konkretne danie z koszyka danego użytkownika
+     *
+     * @param ownerLogin                    login właściciela koszyka
+     * @param cartItemId                    ID dania z koszyka
+     * @return                              danie z koszyka
+     * @throws ResourceNotFoundException    wyjątek w przypadku nie znaleznia podanego dania
+     */
     @Override
     public CartItemDto findUserCartItemById(String ownerLogin, UUID cartItemId) throws ResourceNotFoundException {
         CartItem cartItem = cartItemRepository.findByOwnerLoginAndCartItemId(
@@ -102,6 +138,13 @@ public class CartItemService implements ICartItemService {
         return cartItemDto;
     }
 
+    /**
+     * Zwraca odpowiednią stronę z daniami z koszyka danego użytkownika
+     *
+     * @param login         login właściciela koszyka
+     * @param pageNumber    numer strony
+     * @return              dania z Koszyka na danej stronie
+     */
     @Override
     public Page<CartItemDto> findPaginatedCartItemsByOwnersLogin(String login, int pageNumber) {
         final int pageSize = 10;

@@ -4,6 +4,10 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.UUID;
+
+/**
+ * Klasa reprezentuje zniżkę na produkt
+ */
 @Data
 @Entity
 public class Discount {
