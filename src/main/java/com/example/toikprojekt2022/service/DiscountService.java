@@ -13,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+/**
+ * Obsługuje operacje związane z zarządzaniem zniżkami
+ */
 @ExtensionMethod({DiscountExtension.class})
 public class DiscountService implements IDiscountService {
     private DiscountRepository discountRepository;
@@ -21,10 +24,12 @@ public class DiscountService implements IDiscountService {
         this.discountRepository = discountRepository;
     }
 
-    @Override
-    public List<DiscountDto> findDiscountDtos() {
-        return null;
-    }
+    /**
+     * Pobiera wszystkie zniżki na danej stronie
+     *
+     * @param pageNumber    numer strony
+     * @return              wszystkie zniżki na danej stronie
+     */
     @Override
     public Page<DiscountDto> findDiscountDtos(int pageNumber) {
         final int pageSize = 10;
