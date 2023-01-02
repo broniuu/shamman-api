@@ -10,9 +10,18 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.util.Date;
 
+/**
+ * Służy do wyłapywania wyjątków rzucanych przez kontrollery
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+    /**
+     * Zwraca komunikat o błędzie związanym z tworzeniem nowego konta
+     *
+     * @param exception błąd wyrzucony przez endpoint
+     * @param request   wywołane zapytanie
+     * @return          enkapsulowana wiadomość o błędzie
+     */
     @ExceptionHandler(value = UserAlreadyExistException.class)
     public ErrorMessage handleUserAlreadyExistsException(UserAlreadyExistException exception, WebRequest request)
     {
@@ -25,6 +34,13 @@ public class GlobalExceptionHandler {
         return message;
     }
 
+    /**
+     * Zwraca komunikat o błędzie związanym z brakiem szukanego zasobu
+     *
+     * @param ex        błąd wyrzucony przez endpoint
+     * @param request   wywołane zapytanie
+     * @return          enkapsulowana wiadomość o błędzie
+     */
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorMessage resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
@@ -37,6 +53,13 @@ public class GlobalExceptionHandler {
         return message;
     }
 
+    /**
+     * Obsługuje wszystkie wyjątki, które nie są obługiwane przez inne metody w tej klasie
+     *
+     * @param ex        błąd wyrzucony przez endpoint
+     * @param request   wywołane zapytanie
+     * @return          enkapsulowana wiadomość o błędzie
+     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage globalExceptionHandler(Exception ex, WebRequest request) {
