@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 /**
  * klasa umożliwiająca znalezienie użytkownika o podanym loginie.
+ *
  * {@link UserRepository UserRepository}
  * implementuje UserDetailsService.
  * */
@@ -20,6 +21,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     /**
      * funkcja sprawdza czy login podany przu logowaniu istnieje, jezeli tak zwraca CustomUserDetails.
+     *
      * @param login     login po którym bedzie szukany urzytkownik
      * @return Zwraca klase CustomUserDetails z użytkownikiem znalezionym po loginie
      * */

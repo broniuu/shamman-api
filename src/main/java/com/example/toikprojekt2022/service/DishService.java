@@ -10,7 +10,6 @@ import org.dozer.Mapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ public class DishService implements IDishService {
 
     /**
      * Znajduje danie po Nazwie dania, Oraz ID restauracij
+     *
      * @param id - id restauracij
      * @param name nazwa dania
      * @return Zwraca pojedyńczy obiekt DTO dla dania.
@@ -50,6 +50,7 @@ public class DishService implements IDishService {
     }
     /**
      * Znajduje dania po ID restauracij
+     *
      * @param id - id restauracij\
      * @return liste obiektów DTO wszystkich dań z danej restauracij.
      */
@@ -66,6 +67,7 @@ public class DishService implements IDishService {
     }
     /**
      * Znajduje dania po nazwie restauracij
+     *
      * @param restaurantName - nazwa restauracij
      * @param pageNumber - numer strony
      * @return Zwraca liste Dam podzielonych na strony.

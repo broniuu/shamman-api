@@ -13,6 +13,7 @@ public class Jwks {
     private Jwks() {}
     /**
      * funkcja uzywana do generowania kluczy RSA (prywatny oraz publiczny) dla tokena JWK.
+     *
      * Wykorzystując klasę {@link  KeyGeneratorUtils KeyGeneratorUtils.}
      * @return       zwraca nową parę kluczy wypelniąną ranodmowym UUID.
      *   */

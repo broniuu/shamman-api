@@ -12,6 +12,7 @@ final class KeyGeneratorUtils {
     private KeyGeneratorUtils() {}
     /**
      * funcka statyczna generująca parę kluczy w algorytmie RSA.
+     *
      * @return      zwraca parę kluczy.
      * */
     static KeyPair generateRsaKey() {

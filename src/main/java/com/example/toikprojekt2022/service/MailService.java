@@ -1,10 +1,5 @@
 package com.example.toikprojekt2022.service;
 
-import com.itextpdf.io.source.IRandomAccessSource;
-import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.kernel.pdf.*;
-import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-
 import javax.activation.DataHandler;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -13,14 +8,25 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-
+/**
+ * klassa używana do wysyłania maili
+ *
+ * wysyła receptę na podany adres
+ * zawiera email i haslo do konta firmy
+ * */
 public class MailService {
     static String username ="szamannoreply@gmail.com";
     static String password = "ntigzagdmctmnlwz";
-
+    /**
+     * funkcja wysylająca maila
+     *
+     * @param pdf   pdf w postaci OutpuStream
+     * @param contentField wiadomość dodana do maila
+     * @param titleField    tytuł wiadamości
+     * @param recipientsField email na który wysyłamy wiadomość
+     * */
     public static void sendEmail(ByteArrayOutputStream pdf , String recipientsField, String titleField, String contentField) throws IOException {
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");

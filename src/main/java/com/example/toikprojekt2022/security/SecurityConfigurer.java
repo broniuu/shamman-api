@@ -10,13 +10,11 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -70,6 +68,7 @@ public class SecurityConfigurer  {
     private RSAKey rsaKey;
     /**
      * funkcja tworząca nowy autentykator, ustawiająca parametry dla UserSerwice.
+     *
      * @return DaoAuthenticationProvide z ustawionymi właściwie parametrami.
      * */
     @Bean
@@ -81,6 +80,7 @@ public class SecurityConfigurer  {
 
     /**
      * funkcja określająca które strony wymagają autoryzacij a które są dostępne dla wszystkich
+     *
      * @param       http - HttpSecurity używane przez API.
      * @return      http - HttpSecurity z zbudowanym poprawnie FilterChain.
      * */
@@ -102,6 +102,7 @@ public class SecurityConfigurer  {
 
     /**
      * funckja wykorzystuje kucz RSA (wygenerowany w klasie {@link Jwks Jwks}), do stworzenia JWKSource
+     *
      * @return JWKSource z nowo wygenerowanym kluczem RSA
      * */
     @Bean

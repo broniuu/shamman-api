@@ -22,6 +22,7 @@ public class TokenService {
     }
     /**
      *funkcja generująca tokena
+     *
      * @param authentication     obecnie używana autenktykacja przez API
      * @return                   wartość wygenerowanego tokena
      * */
