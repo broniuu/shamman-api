@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
+/**
+ * Obsługuje operacje związane z zarządzaniem potrawami
+ */
 @Service
 public class DishService implements IDishService {
     private final DishRepository dishRepository;
@@ -30,7 +32,12 @@ public class DishService implements IDishService {
 
     }
 
-
+    /**
+     * Znajduje danie po Nazwie dania, Oraz ID restauracij
+     * @param id - id restauracij
+     * @param name nazwa dania
+     * @return Zwraca pojedyńczy obiekt DTO dla dania.
+     */
     @Override
     public DishDto findByDishNameAndRestaurantId( UUID id,String name) {
         Dish dish= dishRepository.findByDishNameAndRestaurantId(id,name)
@@ -41,7 +48,11 @@ public class DishService implements IDishService {
         mapper.map(dish,dishDto);
         return dishDto;
     }
-
+    /**
+     * Znajduje dania po ID restauracij
+     * @param id - id restauracij\
+     * @return liste obiektów DTO wszystkich dań z danej restauracij.
+     */
     @Override
     public Iterable<DishDto> findByRestaurantId(UUID id) {
         List<Dish> dishes = (List<Dish>) dishRepository.findByRestaurantId(id);
@@ -53,7 +64,12 @@ public class DishService implements IDishService {
         }
         return DishDtos;
     }
-
+    /**
+     * Znajduje dania po nazwie restauracij
+     * @param restaurantName - nazwa restauracij
+     * @param pageNumber - numer strony
+     * @return Zwraca liste Dam podzielonych na strony.
+     */
     @Override
     public Page<DishDto> findDishesByRestaurantName(String restaurantName, int pageNumber) {
         final int pageSize = 10;
