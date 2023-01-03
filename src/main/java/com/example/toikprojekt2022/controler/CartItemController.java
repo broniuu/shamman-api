@@ -24,6 +24,9 @@ import java.util.stream.StreamSupport;
 import static com.example.toikprojekt2022.ReceiptPrinter.PdfPrinter.makePdf;
 import static com.example.toikprojekt2022.service.MailService.sendEmail;
 
+/**
+ * Klasa obsługuje endpointy związane z koszykiem użytkownika
+ */
 @RestController
 public class CartItemController {
 String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus felis neque, tempus eu aliquam vitae, blandit sed lorem. Morbi condimentum eleifend velit, eu tincidunt orci malesuada sed. Sed quam augue, tempus eu luctus ac, luctus ac libero. Phasellus lobortis, libero eu ultricies porttitor, lorem risus placerat mi, non tempus massa mi ac metus. Sed ultricies elit quis lectus maximus, vitae laoreet enim congue. Etiam rutrum nunc quam, eu venenatis neque egestas sed. In hac habitasse platea dictumst. Pellentesque accumsan, quam elementum ultrices scelerisque, nulla velit pretium mauris, nec dapibus lectus nisi a purus.";
@@ -33,7 +36,13 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
         this.cartItemService = cartItemService;
         this.userService=userService;
     }
-
+    /**
+     * Wyświetla dania z koszyka danego użytkownika
+     *
+     * @param login         login właściciela koszyka
+     * @param pageNumber    numer Strony, którą chcemy wyświetlić
+     * @return              dania z koszyka
+     */
     @GetMapping(value = "{login}/usercart", params = {"p"})
     public ResponseEntity<Iterable<CartItemDto>> getCartItemsByUser(
             @PathVariable String login,
@@ -41,22 +50,50 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
         Page<CartItemDto> resultPage = cartItemService.findPaginatedCartItemsByOwnersLogin(login, pageNumber);
         return new ResponseEntity(resultPage, HttpStatus.OK);
     }
-
+    /**
+     * Wyświetla konkretne danie z koszyka danego użytkownika
+     *
+     * @param login         login właściciela koszyka
+     * @param cartItemId    ID dania z koszyka
+     * @return              danie z koszyka
+     */
     @GetMapping("{login}/usercart/{cartItemId}")
     public ResponseEntity<CartItemDto> getUserCartItemByUserAndCartItemId(@PathVariable String login, @PathVariable UUID cartItemId){
         return new ResponseEntity(cartItemService.findUserCartItemById(login,cartItemId), HttpStatus.OK);
     }
-
+    /**
+     * Dodaje danie do koszyka
+     *
+     * @param login     login właściciela koszyka
+     * @param dishId    ID dania
+     * @param count     ilość sztuk dania do zapisania w koszyku
+     * @return          nowe danie z koszyka
+     */
     @PostMapping("{login}/usercart/{dishId}/save/{count}")
     public ResponseEntity<CartItemDto> upsertCartItem(@PathVariable String login, @PathVariable UUID dishId, @PathVariable int count){
         CartItemDto cartItemDto = cartItemService.upsertCartItem(login,dishId,count);
         return new ResponseEntity(cartItemDto, HttpStatus.OK);
     }
+    /**
+     * Usówa wszystkie sztuki dania z koszyka
+     *
+     * @param login         login właściciela koszyka
+     * @param cartItemId    ID dania z koszyka
+     * @return              usunięte danie z koszyka
+     */
     @DeleteMapping ("{login}/usercart/{cartItemId}/delete")
     public ResponseEntity<CartItemDto> deleteCartItem(@PathVariable String login, @PathVariable UUID cartItemId){
         CartItemDto cartItemDto = cartItemService.deleteCartItem(login, cartItemId);
         return new ResponseEntity(cartItemDto, HttpStatus.OK);
     }
+    /**
+     * testowe wyświetlenie paragonu, bez usuwania zawartości z koszyka ani wysyłania maila
+     *
+     * @param login             login właściciela koszyka
+     * @return                  komunikat o udanej transakcji
+     * @throws IOException
+     * @throws WriterException
+     */
     @GetMapping ("{login}/usercart/getpdf")
     public ResponseEntity<byte[]> getPdf(@PathVariable String login) throws IOException, WriterException {
         Iterable<CartItemDto> ci = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);
@@ -73,6 +110,14 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
         ResponseEntity<byte[]> pdf= new ResponseEntity<byte[]>(rawPdf.toByteArray() , headers, HttpStatus.OK);
         return pdf;
     }
+    /**
+     * Dokonuje transackji, czyści koszyk, wyswietla paragon oraz wysyła go na maila
+     *
+     * @param login             login właściciela koszyka
+     * @return                  komunikat o udanej transakcji
+     * @throws IOException
+     * @throws WriterException
+     */
     @GetMapping ("{login}/usercart/checkout")
     public ResponseEntity<byte[]> checkout(@PathVariable String login) throws IOException, WriterException {
         Iterable<CartItemDto> ci = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);

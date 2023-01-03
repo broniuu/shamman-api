@@ -1,10 +1,9 @@
 package com.example.toikprojekt2022.controler;
 
-import com.example.toikprojekt2022.model.LoginRequest;
+import com.example.toikprojekt2022.dto.LoginRequest;
 import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.repository.UserRepository;
-import com.example.toikprojekt2022.service.IUserService;
 import com.example.toikprojekt2022.service.TokenService;
 import com.example.toikprojekt2022.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;

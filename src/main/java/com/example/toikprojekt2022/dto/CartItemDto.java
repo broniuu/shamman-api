@@ -2,7 +2,10 @@ package com.example.toikprojekt2022.dto;
 
 import com.example.toikprojekt2022.model.Dish;
 import com.example.toikprojekt2022.model.User;
+import com.google.zxing.WriterException;
+
 import javax.persistence.*;
+import java.io.IOException;
 import java.util.UUID;
 
 public class CartItemDto {

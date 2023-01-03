@@ -8,6 +8,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collection;
+/**
+ * klasa umożliwiająca logowanie, pobierająca informacje z klasy User.
+ * Implementuje UsrDetails.
+ * */
 public class CustomUserDetails implements UserDetails {
     UserService service;
     PasswordEncoder passwordEncoder;

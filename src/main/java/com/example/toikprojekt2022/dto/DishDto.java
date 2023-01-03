@@ -6,7 +6,9 @@ import com.example.toikprojekt2022.model.Restaurant;
 import javax.persistence.*;
 import java.text.Normalizer;
 import java.util.UUID;
-
+/**
+ * klasa przechowuje informacje używane przy wymianie informacij (Data transfer object) dla dania.
+ */
 public class DishDto {
     private UUID dishId;
     private String name;

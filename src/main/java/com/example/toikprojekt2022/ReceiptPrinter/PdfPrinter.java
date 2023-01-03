@@ -41,7 +41,7 @@ public class PdfPrinter {
      * @param cartItems   przedmioty ktore znajdowaly sie w koszyku
      * @param delivery    boolean dzieki ktoremu wiemy czy kupujacy wykupil dostawe
      * @param note        notatka
-     * @return
+     * @return             ByteArrayOutputStream zwierający pdf
      * @throws IOException
      * @throws WriterException
      */

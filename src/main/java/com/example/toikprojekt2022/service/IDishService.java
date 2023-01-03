@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
-
+/**
+ * Interfejs do obsługi klasy Dish
+ */
 public interface IDishService {
 
     DishDto findByDishNameAndRestaurantId( UUID id,String name);

@@ -10,6 +10,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -29,7 +30,9 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
-
+/**
+ * klasa konfigurująca bezpieczenstwo i dostęp do poszczegolnych end-pointów.
+ * */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurer  {
@@ -42,11 +45,18 @@ public class SecurityConfigurer  {
     public UserDetailsService userDetailsService() {
         return new MyUserDetailsService();
     }
+    /**
+     * funkcja tworząca Password Encoder.
+     * @return password Encoder
+     * */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-
+    /**
+     * funkcja tworząca nowy autentykator, ustawiająca parametry dla UserSerwice, oraz PasswordEncoder
+     * @return DaoAuthenticationProvide z ustawionymi właściwie parametrami.
+     * */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -58,7 +68,10 @@ public class SecurityConfigurer  {
     }
 
     private RSAKey rsaKey;
-
+    /**
+     * funkcja tworząca nowy autentykator, ustawiająca parametry dla UserSerwice.
+     * @return DaoAuthenticationProvide z ustawionymi właściwie parametrami.
+     * */
     @Bean
     public AuthenticationManager authManager(UserDetailsService userDetailsService) {
         var authProvider = new DaoAuthenticationProvider();
@@ -66,11 +79,15 @@ public class SecurityConfigurer  {
         return new ProviderManager(authProvider);
     }
 
-
+    /**
+     * funkcja określająca które strony wymagają autoryzacij a które są dostępne dla wszystkich
+     * @param       http - HttpSecurity używane przez API.
+     * @return      http - HttpSecurity z zbudowanym poprawnie FilterChain.
+     * */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf().disable()
                 .authorizeRequests( auth -> auth
                         .mvcMatchers("/user/**").permitAll()
                         .mvcMatchers("**/logout").authenticated()
@@ -83,13 +100,16 @@ public class SecurityConfigurer  {
                 .build();
     }
 
+    /**
+     * funckja wykorzystuje kucz RSA (wygenerowany w klasie {@link Jwks Jwks}), do stworzenia JWKSource
+     * @return JWKSource z nowo wygenerowanym kluczem RSA
+     * */
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
         rsaKey = Jwks.generateRsa();
         JWKSet jwkSet = new JWKSet(rsaKey);
         return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
     }
-
     @Bean
     JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwks) {
         return new NimbusJwtEncoder(jwks);
