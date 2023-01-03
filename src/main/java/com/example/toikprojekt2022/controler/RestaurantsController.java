@@ -36,6 +36,7 @@ public class RestaurantsController {
     public ResponseEntity<RestaurantDto> getRestaurantByName( @PathVariable String restaurantName){
          restaurantName= restaurantName.replaceAll("_"," ");
          RestaurantDto restaurantDto=restaurantsService.findRestaurantByName(restaurantName);
+
         return new ResponseEntity(restaurantDto, HttpStatus.OK);
     }
 

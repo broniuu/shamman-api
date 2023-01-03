@@ -37,8 +37,11 @@ public class UserController {
     public String token(@RequestBody LoginRequest userLogin) throws AuthenticationException {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLogin.login(), userLogin.password()));
+
         return tokenService.generateToken(authentication);
     }
+
+
     @DeleteMapping(value = "{login}/user/delete")
     public ResponseEntity<User> deleteUserAccount(@PathVariable String login) {
         User deleted = userService.deleteUserAccount(login);
@@ -54,4 +57,6 @@ public class UserController {
         User shown = userService.showUserAccount(login);
         return new ResponseEntity<>(shown, HttpStatus.OK);
     }
+
+
 }
