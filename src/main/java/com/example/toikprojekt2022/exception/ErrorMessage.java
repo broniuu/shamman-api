@@ -2,6 +2,9 @@ package com.example.toikprojekt2022.exception;
 
 import java.util.Date;
 
+/**
+ * Służy do wyświetlania wiadomości odnośnie błędów
+ */
 public class ErrorMessage {
     private int statusCode;
     private Date timestamp;

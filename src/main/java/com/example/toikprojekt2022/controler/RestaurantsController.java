@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+/**
+ * Klasa obsługuje endpointy związane z restauracjami
+ */
 @RestController
 public class RestaurantsController {
 
@@ -25,6 +28,11 @@ public class RestaurantsController {
         this.dishService = dishService;
     }
 
+    /**
+     * Zwraca listę restauracji
+     *
+     * @return      lista restauracji
+     */
     @GetMapping("/restaurants")
 
     public ResponseEntity<Iterable<RestaurantDto>> getRestaurants(){
@@ -32,6 +40,12 @@ public class RestaurantsController {
         return new ResponseEntity(restaurantsService.GetAllRestaurants(), HttpStatus.OK);
     }
 
+    /**
+     * Wyświetla konkretną restauracje
+     *
+     * @param restaurantName    nazwa restauracji do wyświetlenia
+     * @return                  restauracja
+     */
     @GetMapping("/restaurants/{restaurantName}")
     public ResponseEntity<RestaurantDto> getRestaurantByName( @PathVariable String restaurantName){
          restaurantName= restaurantName.replaceAll("_"," ");

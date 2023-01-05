@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+/**
+ * Obsługuje operacje związane z zarządzaniem użytkownikami
+ */
 @Service
 @Transactional
 public class UserService implements IUserService{
@@ -26,6 +29,13 @@ public class UserService implements IUserService{
         this.mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
+    /**
+     * Rejestracja nowego użytkownika
+     *
+     * @param userDto                       dane użytkownika do rejestracji
+     * @return                              zarejestrowany użytkownik
+     * @throws UserAlreadyExistException    wyjątek w przypadku istnienia użytkownika o podanym loginie lub adresie email
+     */
     @Override
     public User registerNewUserAccount(UserDto userDto) throws UserAlreadyExistException {
         if (emailExists(userDto.getEmail())) {
@@ -42,6 +52,12 @@ public class UserService implements IUserService{
         return userRepository.save(userToRegister);
     }
 
+    /**
+     * Usuwanie konta użytkownika
+     *
+     * @param login     login do usuwanego konta
+     * @return          usuwany użytkownik
+     */
     @Override
     public User deleteUserAccount(String login) {
         User userToDelete = userRepository.findByLogin(login);
@@ -53,6 +69,13 @@ public class UserService implements IUserService{
         return userToDelete;
     }
 
+    /**
+     * Aktualizowanie danych użytkownika
+     *
+     * @param login         login do aktualizowanego konta
+     * @param userDto       dane do aktualizacji
+     * @return              zaktualizowany użytkownik
+     */
     @Override
     public User updateUserAccount(String login, UserDto userDto) {
         User userToUpdate = userRepository.findByLogin(login);
@@ -65,6 +88,12 @@ public class UserService implements IUserService{
         return userToUpdate;
     }
 
+    /**
+     * Konwertuje obiekt UserDto do obietku User
+     *
+     * @param userDto           obiekt do konwersji
+     * @param userToUpdate      skonwertowany obiekt User
+     */
     private void changeUserDtoToUser(UserDto userDto, User userToUpdate) {
         userToUpdate.setLogin(userDto.getLogin());
         encodePassword(userToUpdate, userDto);
@@ -77,6 +106,12 @@ public class UserService implements IUserService{
         userToUpdate.setEmail(userDto.getEmail());
     }
 
+    /**
+     * Wyświetlenie danych użytkownika
+     *
+     * @param login     login do wyświetlanego konta
+     * @return          wyświetlany użytkownik
+     */
     @Override
     public User showUserAccount(String login) {
         if (userRepository.findByLogin(login) == null) {
@@ -86,13 +121,32 @@ public class UserService implements IUserService{
         return userRepository.findByLogin(login);
     }
 
+    /**
+     * Sprawdzenie czy podany email jest używany
+     *
+     * @param email     email do sprawdzenia
+     * @return          true jeśli podany mail jest używany lub false jeśli nie jest
+     */
     private boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;
     }
 
+    /**
+     * Sprawdzenie czy podany login jest używany
+     *
+     * @param login     login do sprawdzenia
+     * @return          true jeśli podany login jest używany lub false jeśli nie jest
+     */
     private boolean loginExists(String login) {
         return userRepository.findByLogin(login) != null;
     }
+
+    /**
+     * Kodowanie hasła użytkownika
+     *
+     * @param user      użytkownik
+     * @param userDto   hasło do zakodowania
+     */
     private void encodePassword( User user, UserDto userDto){
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
     }

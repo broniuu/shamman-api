@@ -5,6 +5,9 @@ import com.example.toikprojekt2022.repository.*;
 
 import java.util.List;
 
+/**
+ * Klasa umożliwia wypełnienie bazy odpowiednimi danymi
+ */
 public class Seed {
 
     public Seed(UserRepository userRepository,
@@ -24,6 +27,9 @@ public class Seed {
     private DishRepository dishRepository;
     private DiscountRepository discountRepository;
 
+    /**
+     * Wypełnia baze danymi o restauracjach, daniach oraz zniżkach
+     */
     public void seedData() {
         List<Restaurant> restaurants;
         if (restaurantRepository.count() == 0){
