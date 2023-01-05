@@ -21,7 +21,7 @@ public final class QrCode {
 
     /**
      *
-     * Create QR
+     * funkcja generująca kod QR
      *
      * @param data  zapisany urzytkownik wraz z portwami, iloscia potraw i cena
      * @param charset  the charset
@@ -35,15 +35,11 @@ public final class QrCode {
     public static BufferedImage createQR(String data, String charset, int height, int width)
             throws WriterException, IOException
     {
-
         Map<EncodeHintType, ErrorCorrectionLevel> hashMap = new HashMap<>();
-
         hashMap.put(EncodeHintType.ERROR_CORRECTION,
                 ErrorCorrectionLevel.L);
-
         BitMatrix matrix = new MultiFormatWriter().encode(new String(data.getBytes(charset), charset),
                 BarcodeFormat.QR_CODE, width, height);
-
         return MatrixToImageWriter.toBufferedImage(matrix);
     }
 

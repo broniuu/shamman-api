@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
+/**
+ * klasa generująca Tokena o ważności 1 godziny
+ * */
 @Service
 public class TokenService {
 
@@ -17,7 +20,12 @@ public class TokenService {
     public TokenService(JwtEncoder encoder) {
         this.encoder = encoder;
     }
-
+    /**
+     *funkcja generująca tokena
+     *
+     * @param authentication     obecnie używana autenktykacja przez API
+     * @return                   wartość wygenerowanego tokena
+     * */
     public String generateToken(Authentication authentication) {
         Instant now = Instant.now();
         String scope = authentication.getAuthorities().stream()
