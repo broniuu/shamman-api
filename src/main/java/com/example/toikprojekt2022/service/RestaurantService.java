@@ -13,6 +13,10 @@ import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Obsługuje operacje związane z zarządzaniem restauracjami
+ */
 @Service
 public class RestaurantService implements IRestaurantService{
     private final RestaurantRepository restaurantRepository;
@@ -23,6 +27,12 @@ public class RestaurantService implements IRestaurantService{
         this.mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
+    /**
+     * Znajduje restauracje po nazwie
+     *
+     * @param name      nazwa restauracji
+     * @return          restauracja
+     */
     @Override
     public RestaurantDto findRestaurantByName(String name) {
         Restaurant restaurant= restaurantRepository.findByName(name).orElse(null);
@@ -31,6 +41,12 @@ public class RestaurantService implements IRestaurantService{
         mapper.map(restaurant,restaurantDto);
         return restaurantDto;
     }
+
+    /**
+     * Zwraca wszystkie restauracje
+     *
+     * @return      restauracje
+     */
     @Override
     public Iterable<RestaurantDto> GetAllRestaurants() {
         List<Restaurant> restaurants = (List<Restaurant>) restaurantRepository.findAll();
