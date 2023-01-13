@@ -2,7 +2,6 @@ package com.example.toikprojekt2022.controler;
 
 import com.example.toikprojekt2022.dto.CartItemDto;
 import com.example.toikprojekt2022.exception.ResourceNotFoundException;
-import com.example.toikprojekt2022.repository.CartItemRepository;
 import com.example.toikprojekt2022.service.ICartItemService;
 import org.springframework.data.domain.Page;
 import com.example.toikprojekt2022.service.UserService;
@@ -23,6 +22,7 @@ import java.util.stream.StreamSupport;
 
 import static com.example.toikprojekt2022.ReceiptPrinter.PdfPrinter.makePdf;
 import static com.example.toikprojekt2022.service.MailService.sendEmail;
+import static com.example.toikprojekt2022.security.Utilities.checkUser;
 
 /**
  * Klasa obsługuje endpointy związane z koszykiem użytkownika
@@ -47,8 +47,14 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
     public ResponseEntity<Iterable<CartItemDto>> getCartItemsByUser(
             @PathVariable String login,
             @RequestParam("p") int pageNumber){
-        Page<CartItemDto> resultPage = cartItemService.findPaginatedCartItemsByOwnersLogin(login, pageNumber);
-        return new ResponseEntity(resultPage, HttpStatus.OK);
+        if(checkUser(login)){
+            Page<CartItemDto> resultPage = cartItemService.findPaginatedCartItemsByOwnersLogin(login, pageNumber);
+            return new ResponseEntity<>(resultPage, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+
     }
     /**
      * Wyświetla konkretne danie z koszyka danego użytkownika
@@ -59,7 +65,12 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
      */
     @GetMapping("{login}/usercart/{cartItemId}")
     public ResponseEntity<CartItemDto> getUserCartItemByUserAndCartItemId(@PathVariable String login, @PathVariable UUID cartItemId){
-        return new ResponseEntity(cartItemService.findUserCartItemById(login,cartItemId), HttpStatus.OK);
+        if(checkUser(login)){
+            return new ResponseEntity<>(cartItemService.findUserCartItemById(login,cartItemId), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
     }
     /**
      * Dodaje danie do koszyka
@@ -71,8 +82,13 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
      */
     @PostMapping("{login}/usercart/{dishId}/save/{count}")
     public ResponseEntity<CartItemDto> upsertCartItem(@PathVariable String login, @PathVariable UUID dishId, @PathVariable int count){
-        CartItemDto cartItemDto = cartItemService.upsertCartItem(login,dishId,count);
-        return new ResponseEntity(cartItemDto, HttpStatus.OK);
+        if(checkUser(login)){
+            CartItemDto cartItemDto = cartItemService.upsertCartItem(login,dishId,count);
+            return new ResponseEntity<>(cartItemDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
     }
     /**
      * Usówa wszystkie sztuki dania z koszyka
@@ -83,8 +99,13 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
      */
     @DeleteMapping ("{login}/usercart/{cartItemId}/delete")
     public ResponseEntity<CartItemDto> deleteCartItem(@PathVariable String login, @PathVariable UUID cartItemId){
-        CartItemDto cartItemDto = cartItemService.deleteCartItem(login, cartItemId);
-        return new ResponseEntity(cartItemDto, HttpStatus.OK);
+        if(checkUser(login)){
+            CartItemDto cartItemDto = cartItemService.deleteCartItem(login, cartItemId);
+            return new ResponseEntity<>(cartItemDto, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
     }
     /**
      * testowe wyświetlenie paragonu, bez usuwania zawartości z koszyka ani wysyłania maila
@@ -96,19 +117,25 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
      */
     @GetMapping ("{login}/usercart/getpdf")
     public ResponseEntity<byte[]> getPdf(@PathVariable String login) throws IOException, WriterException {
-        Iterable<CartItemDto> ci = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);
-        if (ci == null)
-            throw new ResourceNotFoundException("The usercart is empty!");
-        List<CartItemDto> cartitems = StreamSupport.stream(ci.spliterator(), false).toList();
-        HttpHeaders headers = new HttpHeaders();
-        String filename= "Rachunek.pdf";
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=" + filename);
-        headers.setContentDispositionFormData(filename, filename);
-        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-        ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, true,"test");
-        ResponseEntity<byte[]> pdf= new ResponseEntity<byte[]>(rawPdf.toByteArray() , headers, HttpStatus.OK);
-        return pdf;
+        if(checkUser(login)){
+            Iterable<CartItemDto> ci = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);
+            if (ci == null)
+                throw new ResourceNotFoundException("The usercart is empty!");
+            List<CartItemDto> cartitems = StreamSupport.stream(ci.spliterator(), false).toList();
+            HttpHeaders headers = new HttpHeaders();
+            String filename= "Rachunek.pdf";
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            headers.add("content-disposition", "inline;filename=" + filename);
+            headers.setContentDispositionFormData(filename, filename);
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, true,"test");
+            ResponseEntity<byte[]> pdf= new ResponseEntity<byte[]>(rawPdf.toByteArray() , headers, HttpStatus.OK);
+            return pdf;
+        }else{
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
+
+
     }
     /**
      * Dokonuje transackji, czyści koszyk, wyswietla paragon oraz wysyła go na maila
@@ -120,23 +147,28 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
      */
     @GetMapping ("{login}/usercart/checkout")
     public ResponseEntity<byte[]> checkout(@PathVariable String login) throws IOException, WriterException {
-        Iterable<CartItemDto> ci = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);
-        if (ci == null)
-            throw new ResourceNotFoundException("The usercart is empty!");
-        List<CartItemDto> cartitems = StreamSupport.stream(ci.spliterator(), false).toList();
-        HttpHeaders headers = new HttpHeaders();
-        String filename= "Rachunek.pdf";
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=" + filename);
-        headers.setContentDispositionFormData(filename, filename);
-        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-        ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, true,"test");
-        ResponseEntity<byte[]> pdf= new ResponseEntity<byte[]>(rawPdf.toByteArray() , headers, HttpStatus.OK);
-        cartitems.forEach((cartItem) ->cartItemService.deleteCartItem(login,cartItem.getCartItemId()));
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();
-        sendEmail(rawPdf,userService.showUserAccount(login).getEmail(),"Receipt from:"+date,thankYouNote);
-        return pdf;
+        if(checkUser(login)){
+            Iterable<CartItemDto> ci = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);
+            if (ci == null)
+                throw new ResourceNotFoundException("The usercart is empty!");
+            List<CartItemDto> cartitems = StreamSupport.stream(ci.spliterator(), false).toList();
+            HttpHeaders headers = new HttpHeaders();
+            String filename= "Rachunek.pdf";
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            headers.add("content-disposition", "inline;filename=" + filename);
+            headers.setContentDispositionFormData(filename, filename);
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, true,"test");
+            ResponseEntity<byte[]> pdf= new ResponseEntity<byte[]>(rawPdf.toByteArray() , headers, HttpStatus.OK);
+            cartitems.forEach((cartItem) ->cartItemService.deleteCartItem(login,cartItem.getCartItemId()));
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Date date = new Date();
+            sendEmail(rawPdf,userService.showUserAccount(login).getEmail(),"Receipt from:"+date,thankYouNote);
+            return pdf;
+        }else{
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
     }
 
 }

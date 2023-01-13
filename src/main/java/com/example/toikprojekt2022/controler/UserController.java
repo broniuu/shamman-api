@@ -1,10 +1,9 @@
 package com.example.toikprojekt2022.controler;
 
-import com.example.toikprojekt2022.model.LoginRequest;
+import com.example.toikprojekt2022.dto.LoginRequest;
 import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.repository.UserRepository;
-import com.example.toikprojekt2022.service.IUserService;
 import com.example.toikprojekt2022.service.TokenService;
 import com.example.toikprojekt2022.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import static com.example.toikprojekt2022.security.Utilities.checkUser;
 
 /**
  * Klasa obsługuje endpointy związane z użytkownikiem
@@ -66,8 +67,14 @@ public class UserController {
      */
     @DeleteMapping(value = "{login}/user/delete")
     public ResponseEntity<User> deleteUserAccount(@PathVariable String login) {
-        User deleted = userService.deleteUserAccount(login);
-        return new ResponseEntity<>(deleted, HttpStatus.OK);
+        User deleted = null;
+        if(checkUser(login)){
+            deleted = userService.deleteUserAccount(login);
+            return new ResponseEntity<>(deleted, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
     }
 
     /**
@@ -79,8 +86,13 @@ public class UserController {
      */
     @PostMapping(value = "{login}/user/update")
     public ResponseEntity<User> updateUserAccount(@PathVariable String login, @RequestBody UserDto userDto) {
-        User updated = userService.updateUserAccount(login, userDto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        if(checkUser(login)){
+            User updated = userService.updateUserAccount(login, userDto);
+            return new ResponseEntity<>(updated, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
     }
 
     /**
@@ -91,7 +103,13 @@ public class UserController {
      */
     @GetMapping(value = "{login}/user")
     public ResponseEntity<User> showUserAccount(@PathVariable String login) {
-        User shown = userService.showUserAccount(login);
-        return new ResponseEntity<>(shown, HttpStatus.OK);
+        User shown = null;
+        if(checkUser(login)){
+             shown = userService.showUserAccount(login);
+            return new ResponseEntity<>(shown, HttpStatus.OK);
+
+        }else{
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 }
