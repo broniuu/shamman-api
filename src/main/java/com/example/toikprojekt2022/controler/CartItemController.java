@@ -1,6 +1,8 @@
 package com.example.toikprojekt2022.controler;
 
 import com.example.toikprojekt2022.dto.CartItemDto;
+import com.example.toikprojekt2022.dto.Receipt;
+import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.exception.ResourceNotFoundException;
 import com.example.toikprojekt2022.service.ICartItemService;
 import org.springframework.data.domain.Page;
@@ -141,12 +143,13 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
      * Dokonuje transackji, czyści koszyk, wyswietla paragon oraz wysyła go na maila
      *
      * @param login             login właściciela koszyka
+     * @param receipt           zawartość dodatkowa recepty
      * @return                  komunikat o udanej transakcji
      * @throws IOException
      * @throws WriterException
      */
-    @GetMapping ("{login}/usercart/checkout")
-    public ResponseEntity<byte[]> checkout(@PathVariable String login) throws IOException, WriterException {
+    @PostMapping ("{login}/usercart/checkout")
+    public ResponseEntity<byte[]> checkout(@PathVariable String login,@RequestBody Receipt receipt) throws IOException, WriterException {
         if(checkUser(login)){
             Iterable<CartItemDto> ci = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);
             if (ci == null)
@@ -158,7 +161,7 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
             headers.add("content-disposition", "inline;filename=" + filename);
             headers.setContentDispositionFormData(filename, filename);
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-            ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, true,"test");
+            ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, receipt.isDelivery(), receipt.getNote());
             ResponseEntity<byte[]> pdf= new ResponseEntity<byte[]>(rawPdf.toByteArray() , headers, HttpStatus.OK);
             cartitems.forEach((cartItem) ->cartItemService.deleteCartItem(login,cartItem.getCartItemId()));
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
