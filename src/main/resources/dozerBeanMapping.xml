@@ -5,18 +5,11 @@
           http://dozer.sourceforge.net/schema/beanmapping.xsd">
     <mapping type="one-way">
         <class-a>java.util.UUID</class-a>
-        <class-b bean-factory="com.example.toikprojekt2022.factory.UuidBeanFactory">java.util.UUID</class-b>
+        <class-b bean-factory="com.example.BazaDanychTwoFactor.factory.UuidBeanFactory">java.util.UUID</class-b>
     </mapping>
     <mapping>
-        <class-a>com.example.toikprojekt2022.model.User</class-a>
-        <class-b>com.example.toikprojekt2022.dto.UserDto</class-b>
+        <class-a>com.example.BazaDanychTwoFactor.model.User</class-a>
+        <class-b>com.example.BazaDanychTwoFactor.dto.UserDto</class-b>
     </mapping>
-    <mapping>
-        <class-a>com.example.toikprojekt2022.model.Dish</class-a>
-        <class-b>com.example.toikprojekt2022.dto.DishDto</class-b>
-    </mapping>
-    <mapping>
-        <class-a>com.example.toikprojekt2022.model.CartItem</class-a>
-        <class-b>com.example.toikprojekt2022.dto.CartItemDto</class-b>
-    </mapping>
+
 </mappings>
