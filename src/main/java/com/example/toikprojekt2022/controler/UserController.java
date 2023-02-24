@@ -6,6 +6,7 @@ import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.repository.UserRepository;
 import com.example.toikprojekt2022.service.TokenService;
 import com.example.toikprojekt2022.service.UserService;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 import static com.example.toikprojekt2022.security.Utilities.checkUser;
 
@@ -24,9 +29,12 @@ import static com.example.toikprojekt2022.security.Utilities.checkUser;
 public class UserController {
     private final UserService userService;
     private final TokenService tokenService;
+
+    private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenService tokenService, AuthenticationManager authenticationManager) {
         this.tokenService = tokenService;
+        this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.userService = new UserService(userRepository, passwordEncoder);
     }
@@ -53,10 +61,19 @@ public class UserController {
      * @throws AuthenticationException
      */
     @PostMapping(value ="/user/login")
-    public String token(@RequestBody LoginRequest userLogin) throws AuthenticationException {
+    public String token(@RequestBody LoginRequest userLogin, HttpServletResponse response) throws AuthenticationException {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLogin.login(), userLogin.password()));
-        return tokenService.generateToken(authentication);
+        String token = tokenService.generateToken(authentication);
+        UUID loggedUserId = userRepository.findByLogin(userLogin.login()).getUserId();
+        Cookie jwtTokenCookie = new Cookie(loggedUserId.toString() ,token);
+        jwtTokenCookie.setMaxAge(86400);
+        jwtTokenCookie.setSecure(false);
+        jwtTokenCookie.setHttpOnly(true);
+        jwtTokenCookie.setPath("/");
+
+        response.addCookie(jwtTokenCookie);
+        return token;
     }
 
     /**
