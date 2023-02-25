@@ -6,7 +6,6 @@ import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.repository.UserRepository;
 import com.example.toikprojekt2022.service.TokenService;
 import com.example.toikprojekt2022.service.UserService;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 import static com.example.toikprojekt2022.security.Utilities.checkUser;
@@ -56,12 +54,12 @@ public class UserController {
     /**
      * Logowanie użytkownika
      *
-     * @param userLogin                 dane do logowania użytkownika
-     * @return                          zalogowany użytkownik
+     * @param userLogin dane do logowania użytkownika
+     * @return zalogowany użytkownik
      * @throws AuthenticationException
      */
     @PostMapping(value ="/user/login")
-    public String token(@RequestBody LoginRequest userLogin, HttpServletResponse response) throws AuthenticationException {
+    public Cookie token(@RequestBody LoginRequest userLogin) throws AuthenticationException {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLogin.login(), userLogin.password()));
         String token = tokenService.generateToken(authentication);
@@ -72,8 +70,7 @@ public class UserController {
         jwtTokenCookie.setHttpOnly(true);
         jwtTokenCookie.setPath("/");
 
-        response.addCookie(jwtTokenCookie);
-        return token;
+        return jwtTokenCookie;
     }
 
     /**
