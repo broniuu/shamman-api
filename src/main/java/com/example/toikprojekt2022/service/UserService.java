@@ -47,7 +47,7 @@ public class UserService implements IUserService{
                     + userDto.getLogin());
         }
         User userToRegister = mapper.map(userDto,User.class);
-        userToRegister.setLogin(userDto.getLogin().toLowerCase());
+        userToRegister.setLogin(userDto.getLogin());
         encodePassword(userToRegister, userDto);
         return userRepository.save(userToRegister);
     }
