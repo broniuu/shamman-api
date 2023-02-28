@@ -4,6 +4,7 @@ import com.example.toikprojekt2022.dto.CartItemDto;
 import com.example.toikprojekt2022.dto.Receipt;
 import com.example.toikprojekt2022.dto.UserDto;
 import com.example.toikprojekt2022.exception.ResourceNotFoundException;
+import com.example.toikprojekt2022.model.CartItem;
 import com.example.toikprojekt2022.service.ICartItemService;
 import org.springframework.data.domain.Page;
 import com.example.toikprojekt2022.service.UserService;
@@ -172,6 +173,26 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
+    }
+
+    @PostMapping ("{login}/usercart/{dishId}/add")
+    public ResponseEntity addDishToUserCart(@PathVariable String login, @PathVariable UUID dishId) {
+        if(checkUser(login)){
+            cartItemService.addSingleItem(login, dishId);
+            return new ResponseEntity(HttpStatus.OK);
+        }else{
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @PostMapping("{login}/usercart/{dishId}/remove")
+    public ResponseEntity removeDishFromUserCart(@PathVariable String login, @PathVariable UUID dishId) {
+        if(checkUser(login)){
+            cartItemService.removeSingeItem(login, dishId);
+            return new ResponseEntity(HttpStatus.OK);
+        }else{
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
     }
 
 }

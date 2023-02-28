@@ -15,4 +15,7 @@ public interface ICartItemService {
     CartItemDto findUserCartItemById(String ownerLogin, UUID cartItemId);
     Page<CartItemDto> findPaginatedCartItemsByOwnersLogin(String login, int pageNumber);
 
+    void addSingleItem(String login, UUID dishId);
+
+    void removeSingeItem(String login, UUID dishId);
 }

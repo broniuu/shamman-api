@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -155,5 +156,34 @@ public class CartItemService implements ICartItemService {
         if (cartItems.isEmpty() || cartItems.getTotalElements() > cartItemsCount)
             throw new ResourceNotFoundException("Not found CartItems of user " + login + "on this page");
         return cartItems.map(x -> mapper.map(x, CartItemDto.class));
+    }
+
+    @Override
+    public void addSingleItem(String login, UUID dishId) {
+        Optional<CartItem> cartItemOrNull = cartItemRepository.findByOwnerLoginAndDishId(login, dishId);
+        if (cartItemOrNull.isEmpty()) {
+            User owner = userRepository.findByLogin(login);
+            Dish dish = dishRepository.findById(dishId).get();
+            CartItem newCartItem = new CartItem(owner, dish, 1);
+            cartItemRepository.save(newCartItem);
+            return;
+        }
+        CartItem cartItem = cartItemOrNull.get();
+        int newCountOfDish = cartItem.getCountOfDish() + 1;
+        cartItem.setCountOfDish(newCountOfDish);
+        cartItemRepository.save(cartItem);
+    }
+    @Override
+    public void removeSingeItem(String login, UUID dishId) {
+        CartItem cartItem = cartItemRepository.findByOwnerLoginAndDishId(login, dishId).orElseThrow(() ->
+                new ResourceNotFoundException("This item not exist in shopping cart!")
+        );
+        int newCountOfDish = cartItem.getCountOfDish() - 1;
+        if (newCountOfDish < 1) {
+            cartItemRepository.deleteByCartItemId(cartItem.getCartItemId());
+            return;
+        }
+        cartItem.setCountOfDish(newCountOfDish);
+        cartItemRepository.save(cartItem);
     }
 }
