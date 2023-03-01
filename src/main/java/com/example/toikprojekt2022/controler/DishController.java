@@ -34,12 +34,12 @@ public class DishController {
      * @param pageNumber    numer strony
      * */
     @GetMapping(value = "/restaurants/{restaurantName}/dishes", params = {"p"})
-    public ResponseEntity<Iterable<DishDto>> getDishesByRestaurantName(
+    public ResponseEntity<Iterable<DishDto>> getPagedDishesByRestaurantName(
             @PathVariable String restaurantName,
             @RequestParam(value = "p", defaultValue = "0") int pageNumber){
 
         restaurantName= restaurantName.replaceAll("_"," ");
-        Page<DishDto> dishDtos = dishService.findDishesByRestaurantName(restaurantName, pageNumber);
+        Page<DishDto> dishDtos = dishService.findPagedDishesByRestaurantName(restaurantName, pageNumber);
         return new ResponseEntity(dishDtos, HttpStatus.OK);
     }
     /**
@@ -49,12 +49,19 @@ public class DishController {
      * @param restaurantName    nazwa restauracij
      * */
     @GetMapping("/restaurants/{restaurantName}/dishes/{dishName}")
-    public ResponseEntity<DishDto> getDishesByRestaurantName(
+    public ResponseEntity<DishDto> getDishByRestaurantName(
             @PathVariable String restaurantName,
             @PathVariable String dishName){
         restaurantName= restaurantName.replaceAll("_"," ");
         dishName=dishName.replaceAll("_"," ");
         UUID id=restaurantsService.findRestaurantByName(restaurantName).getRestaurantId();
         return new ResponseEntity(dishService.findByDishNameAndRestaurantId(id,dishName), HttpStatus.OK);
+    }
+
+    @GetMapping("/restaurants/{restaurantName}/dishes")
+    public ResponseEntity<Iterable<DishDto>> getDishesByRestaurantName(@PathVariable String restaurantName) {
+        String realRestaurantName = restaurantName.replaceAll("_"," ");
+        Iterable<DishDto> dishDtos = dishService.findByRestaurantName(realRestaurantName);
+        return new ResponseEntity<>(dishDtos, HttpStatus.OK);
     }
 }
