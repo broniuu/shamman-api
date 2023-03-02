@@ -89,10 +89,8 @@ public class SecurityConfigurer  {
         return http
                 .csrf().disable()
                 .authorizeRequests( auth -> auth
-                        .mvcMatchers("/user/**").permitAll()
-                        .mvcMatchers("**/logout").authenticated()
-                        .mvcMatchers("**/usercart/**").authenticated()
-                        .mvcMatchers("/restaurants/**","/discounts/**").permitAll()
+                        .mvcMatchers("/user/**", "/restaurants/**","/discounts/**","/activity").permitAll()
+                        .mvcMatchers("**/logout", "**/usercart/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
