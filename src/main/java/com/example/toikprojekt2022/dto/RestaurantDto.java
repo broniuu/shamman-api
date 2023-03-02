@@ -9,6 +9,24 @@ public class RestaurantDto {
     private UUID restaurantId;
     private String name;
     private String imageUrl;
+    private String backgroundImageUrl;
+    private int score;
+
+    public String getBackgroundImageUrl() {
+        return backgroundImageUrl;
+    }
+
+    public void setBackgroundImageUrl(String backgroundImageUrl) {
+        this.backgroundImageUrl = backgroundImageUrl;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
 
     public void setRestaurantId(UUID restaurantId) {
         this.restaurantId = restaurantId;
