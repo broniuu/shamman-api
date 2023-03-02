@@ -11,6 +11,33 @@ public class RestaurantDto {
     private String imageUrl;
     private String backgroundImageUrl;
     private int score;
+    private String street;
+    private String houseNumber;
+    private String location;
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getHouseNumber() {
+        return houseNumber;
+    }
+
+    public void setHouseNumber(String houseNumber) {
+        this.houseNumber = houseNumber;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public String getBackgroundImageUrl() {
         return backgroundImageUrl;
