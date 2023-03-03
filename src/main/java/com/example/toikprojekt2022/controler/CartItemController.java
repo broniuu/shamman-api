@@ -144,13 +144,14 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
      * Dokonuje transackji, czyści koszyk, wyswietla paragon oraz wysyła go na maila
      *
      * @param login             login właściciela koszyka
-     * @param receipt           zawartość dodatkowa recepty
+     * @param note           notatka
+     * @param delivery          czy dostawa
      * @return                  komunikat o udanej transakcji
      * @throws IOException
      * @throws WriterException
      */
-    @PostMapping ("{login}/usercart/checkout")
-    public ResponseEntity<byte[]> checkout(@PathVariable String login,@RequestBody Receipt receipt) throws IOException, WriterException {
+    @GetMapping ("{login}/usercart/checkout/{note}/{delivery}")
+    public ResponseEntity<byte[]> checkout(@PathVariable String login,@PathVariable String note,@PathVariable String delivery ) throws IOException, WriterException {
         if(checkUser(login)){
             Iterable<CartItemDto> ci = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);
             if (ci == null)
@@ -162,7 +163,7 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
             headers.add("content-disposition", "inline;filename=" + filename);
             headers.setContentDispositionFormData(filename, filename);
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-            ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, receipt.isDelivery(), receipt.getNote());
+            ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, Boolean.parseBoolean(delivery),note);
             ResponseEntity<byte[]> pdf= new ResponseEntity<byte[]>(rawPdf.toByteArray() , headers, HttpStatus.OK);
             cartitems.forEach((cartItem) ->cartItemService.deleteCartItem(login,cartItem.getCartItemId()));
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
