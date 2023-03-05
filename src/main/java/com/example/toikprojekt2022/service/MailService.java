@@ -17,8 +17,8 @@ import java.util.Properties;
  * zawiera email i haslo do konta firmy
  * */
 public class MailService {
-    static String username ="szamannoreply@gmail.com";
-    static String password = "ntigzagdmctmnlwz";
+    static String username ="szamannoeply@gmail.com";
+    static String password = "xfqcdpreawhnhqhp";
     /**
      * funkcja wysylająca maila
      *
