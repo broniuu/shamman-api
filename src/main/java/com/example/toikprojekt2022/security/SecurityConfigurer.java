@@ -90,7 +90,7 @@ public class SecurityConfigurer  {
                 .csrf().disable()
                 .authorizeRequests( auth -> auth
                         .mvcMatchers("/user/**", "/restaurants/**","/discounts/**","/activity").permitAll()
-                        .mvcMatchers("**/logout", "**/usercart/**").authenticated()
+                        .mvcMatchers("**/logout", "**/usercart/**", "/islogged").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

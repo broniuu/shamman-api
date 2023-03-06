@@ -12,4 +12,8 @@ public class ActivityController {
     public ResponseEntity CheckActivity(){
         return new ResponseEntity(HttpStatus.OK);
     }
+    @GetMapping("/islogged")
+    public ResponseEntity IsLogged(){
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
