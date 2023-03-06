@@ -46,6 +46,7 @@ public class PdfPrinter {
      * @throws WriterException
      */
     public static ByteArrayOutputStream makePdf(User currentUser, List<CartItemDto> cartItems, boolean delivery, String note) throws IOException, WriterException {
+        int deliveryPrice=15;
         String filename= "Rachunek.pdf";
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -67,6 +68,9 @@ public class PdfPrinter {
             price+=cartItem.getCountOfDish()*cartItem.getDish().getPrice();
             qrOrders.append(cartItem.getDish().getName()).append(" x").append(cartItem.getCountOfDish());
             it++;
+        }
+        if(delivery){
+            price+=deliveryPrice;
         }
         PdfDocument pdfDocument=new PdfDocument(pdfWriter);
         pdfDocument.addNewPage();

@@ -163,7 +163,7 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
             headers.add("content-disposition", "inline;filename=" + filename);
             headers.setContentDispositionFormData(filename, filename);
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-            ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, Boolean.parseBoolean(delivery),note);
+            ByteArrayOutputStream rawPdf=makePdf(userService.showUserAccount(login),cartitems, Boolean.parseBoolean(delivery),note.replaceAll("_"," "));
             ResponseEntity<byte[]> pdf= new ResponseEntity<byte[]>(rawPdf.toByteArray() , headers, HttpStatus.OK);
             cartitems.forEach((cartItem) ->cartItemService.deleteCartItem(login,cartItem.getCartItemId()));
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
