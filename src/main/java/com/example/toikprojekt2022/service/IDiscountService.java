@@ -1,12 +1,14 @@
 package com.example.toikprojekt2022.service;
 
-import com.example.toikprojekt2022.dto.DiscountDto;
+import com.example.toikprojekt2022.dto.DiscountToViewDto;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
+import java.util.UUID;
+
 /**
  * Interfejs do obsługi klasy CartItem
  */
 public interface IDiscountService {
-    Page<DiscountDto> findDiscountDtos(int pageNumber);
+    Page<DiscountToViewDto> findDiscountDtos(int pageNumber);
+    boolean tryUnlockDiscount(UUID discountId, String discountCode, String login);
 }

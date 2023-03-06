@@ -1,8 +1,6 @@
 package com.example.toikprojekt2022.model;
 
 
-import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
@@ -27,9 +25,13 @@ public class User {
     @OneToMany(mappedBy = "cartOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<CartItem> shoppingCartItems;
 
+    @ManyToMany
+    private List<Discount> discounts;
+
     public User(String login, String password, String name,
                 String surname, String address, String debitCardNumber,
-                String expireDate, String cvv, String email) {
+                String expireDate, String cvv, String email, List<Discount> userWithThisDiscount) {
+        this.discounts = userWithThisDiscount;
         this.userId = UUID.randomUUID();
         this.login = login;
         this.password = password;
@@ -54,6 +56,7 @@ public class User {
         this.debitCardNumber=user.getDebitCardNumber();
         this.expireDate=user.getExpireDate();
         this.email=user.getEmail();
+        this.discounts=user.getDiscounts();
     }
 
     public User() {
@@ -85,7 +88,7 @@ public class User {
                 String expireDate,
                 String cvv,
                 String email,
-                List<CartItem> shoppingCartItems) {
+                List<CartItem> shoppingCartItems, List<Discount> discounts) {
         this.userId = userId;
         this.login = login;
         this.password = password;
@@ -97,6 +100,23 @@ public class User {
         this.cvv = cvv;
         this.email = email;
         this.shoppingCartItems = shoppingCartItems;
+        this.discounts = discounts;
+    }
+
+    public List<CartItem> getShoppingCartItems() {
+        return shoppingCartItems;
+    }
+
+    public void setShoppingCartItems(List<CartItem> shoppingCartItems) {
+        this.shoppingCartItems = shoppingCartItems;
+    }
+
+    public List<Discount> getDiscounts() {
+        return discounts;
+    }
+
+    public void setDiscounts(List<Discount> discounts) {
+        this.discounts = discounts;
     }
 
     public String getName() {

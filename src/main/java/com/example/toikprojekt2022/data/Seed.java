@@ -3,6 +3,7 @@ package com.example.toikprojekt2022.data;
 import com.example.toikprojekt2022.model.*;
 import com.example.toikprojekt2022.repository.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -960,12 +961,12 @@ public class Seed {
         }
         if (discountRepository.count() == 0){
             List<Discount> discounts = List.of(
-                    new Discount(dishes.get(3), 0.4),
-                    new Discount(dishes.get(5), 0.22),
-                    new Discount(dishes.get(7), 0.45),
-                    new Discount(dishes.get(8), 0.75),
-                    new Discount(dishes.get(9), 0.22),
-                    new Discount(dishes.get(22), 0.6)
+                    new Discount(dishes.get(3), 0.4, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(5), 0.22, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(7), 0.45, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(8), 0.75, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(9), 0.22, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(22), 0.6, LocalDate.now().plusMonths(5))
 
             );
 

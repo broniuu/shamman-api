@@ -1,10 +1,12 @@
 package com.example.toikprojekt2022.service;
 
-import com.example.toikprojekt2022.dto.DiscountDto;
+import com.example.toikprojekt2022.dto.DiscountToViewDto;
 import com.example.toikprojekt2022.exception.DishNotFoundException;
 import com.example.toikprojekt2022.extension.DiscountExtension;
 import com.example.toikprojekt2022.model.Discount;
+import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.repository.DiscountRepository;
+import com.example.toikprojekt2022.repository.UserRepository;
 import lombok.experimental.ExtensionMethod;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -12,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Obsługuje operacje związane z zarządzaniem zniżkami
@@ -19,9 +23,11 @@ import java.util.List;
 @ExtensionMethod({DiscountExtension.class})
 public class DiscountService implements IDiscountService {
     private DiscountRepository discountRepository;
+    private UserRepository userRepository;
 
-    public DiscountService(DiscountRepository discountRepository) {
+    public DiscountService(DiscountRepository discountRepository, UserRepository userRepository) {
         this.discountRepository = discountRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -31,7 +37,7 @@ public class DiscountService implements IDiscountService {
      * @return              wszystkie zniżki na danej stronie
      */
     @Override
-    public Page<DiscountDto> findDiscountDtos(int pageNumber) {
+    public Page<DiscountToViewDto> findDiscountDtos(int pageNumber) {
         final int pageSize = 10;
         List<Discount> discounts = (List<Discount>) discountRepository.findAll();
         int discountsTotal = discounts.size();
@@ -40,5 +46,23 @@ public class DiscountService implements IDiscountService {
         if (discounts.isEmpty() || discountPage.getTotalElements() > discountsTotal)
             throw new DishNotFoundException("There is no discounts on this page");
         return discountPage.map(discount -> discount.toDiscountDto());
+    }
+
+    @Override
+    public boolean tryUnlockDiscount(UUID discountId, String discountCode, String login) {
+        Optional<Discount> probableDiscount = discountRepository.findById(discountId);
+        if(probableDiscount.isEmpty())
+            throw new RuntimeException("Zniżka o podanym Id nie istnieje");
+        Discount discount = probableDiscount.get();
+        if (!discount.getDiscountCode().equals(discountCode))
+            throw new RuntimeException("Podano nieporpawny Kod Rabatowy");
+        User user = userRepository.findByLogin(login);
+        if(user == null)
+            throw new RuntimeException("Użytkownik o podanym loginie nie istnieje!");
+        List<Discount> usersDiscounts = user.getDiscounts();
+        usersDiscounts.add(discount);
+        user.setDiscounts(usersDiscounts);
+        userRepository.save(user);
+        return true;
     }
 }

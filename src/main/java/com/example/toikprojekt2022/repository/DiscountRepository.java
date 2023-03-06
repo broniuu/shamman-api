@@ -8,6 +8,7 @@ import java.util.UUID;
  * Służy do obłśugi zniżek w bazie danych
  */
 public interface DiscountRepository extends CrudRepository<Discount, UUID> {
+    Discount findByDiscountCode(String discountCode);
     /**
      * znajduje zniżkę, na podane danie
      *
