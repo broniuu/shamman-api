@@ -14,6 +14,62 @@ public class DiscountDto {
     private double discountValue;
     private String discountCode;
     private LocalDate expireDate;
-    private Dish dish;
-    List<User> userWithThisDiscount;
+    private DishDto dish;
+    private List<UserDto> userWithThisDiscount;
+
+    public UUID getDiscountId() {
+        return discountId;
+    }
+
+    public void setDiscountId(UUID discountId) {
+        this.discountId = discountId;
+    }
+
+    public UUID getDishId() {
+        return dishId;
+    }
+
+    public void setDishId(UUID dishId) {
+        this.dishId = dishId;
+    }
+
+    public double getDiscountValue() {
+        return discountValue;
+    }
+
+    public void setDiscountValue(double discountValue) {
+        this.discountValue = discountValue;
+    }
+
+    public String getDiscountCode() {
+        return discountCode;
+    }
+
+    public void setDiscountCode(String discountCode) {
+        this.discountCode = discountCode;
+    }
+
+    public LocalDate getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(LocalDate expireDate) {
+        this.expireDate = expireDate;
+    }
+
+    public DishDto getDish() {
+        return dish;
+    }
+
+    public void setDish(DishDto dish) {
+        this.dish = dish;
+    }
+
+    public List<UserDto> getUserWithThisDiscount() {
+        return userWithThisDiscount;
+    }
+
+    public void setUserWithThisDiscount(List<UserDto> userWithThisDiscount) {
+        this.userWithThisDiscount = userWithThisDiscount;
+    }
 }

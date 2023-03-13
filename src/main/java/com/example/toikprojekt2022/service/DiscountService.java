@@ -17,6 +17,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -64,10 +66,13 @@ public class DiscountService implements IDiscountService {
         User user = userRepository.findByLogin(login);
         if(user == null)
             throw new RuntimeException("Użytkownik o podanym loginie nie istnieje!");
-        List<Discount> usersDiscounts = user.getDiscounts();
-        usersDiscounts.add(discount);
-        user.setDiscounts(usersDiscounts);
-        userRepository.save(user);
+        List<User> usersWithThisDiscount = discount.getUserWithThisDiscount();
+        usersWithThisDiscount.add(user);
+        discount.setUserWithThisDiscount(usersWithThisDiscount);
+        discountRepository.save(discount);
+//        List<Discount> usersDiscounts = user.getDiscounts();
+//        usersDiscounts.add(discount);
+//        user.setDiscounts(usersDiscounts);
         return true;
     }
 

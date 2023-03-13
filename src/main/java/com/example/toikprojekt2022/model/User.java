@@ -25,7 +25,7 @@ public class User {
     @OneToMany(mappedBy = "cartOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<CartItem> shoppingCartItems;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<Discount> discounts;
 
     public User(String login, String password, String name,

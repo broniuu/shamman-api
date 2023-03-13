@@ -12,6 +12,5 @@ import java.util.UUID;
 public interface IDiscountService {
     Page<DiscountToViewDto> findDiscountDtos(int pageNumber);
     boolean tryUnlockDiscount(UUID discountId, String discountCode, String login);
-
     Iterable<DiscountDto> getDiscountsOfUser(String userLogin);
 }
