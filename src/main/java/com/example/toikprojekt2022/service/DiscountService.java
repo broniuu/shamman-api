@@ -1,13 +1,17 @@
 package com.example.toikprojekt2022.service;
 
+import com.example.toikprojekt2022.dto.DiscountDto;
 import com.example.toikprojekt2022.dto.DiscountToViewDto;
 import com.example.toikprojekt2022.exception.DishNotFoundException;
+import com.example.toikprojekt2022.exception.ResourceNotFoundException;
 import com.example.toikprojekt2022.extension.DiscountExtension;
 import com.example.toikprojekt2022.model.Discount;
 import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.repository.DiscountRepository;
 import com.example.toikprojekt2022.repository.UserRepository;
 import lombok.experimental.ExtensionMethod;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,10 +28,11 @@ import java.util.UUID;
 public class DiscountService implements IDiscountService {
     private DiscountRepository discountRepository;
     private UserRepository userRepository;
-
+    private final Mapper mapper;
     public DiscountService(DiscountRepository discountRepository, UserRepository userRepository) {
         this.discountRepository = discountRepository;
         this.userRepository = userRepository;
+        this.mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     /**
@@ -64,5 +69,14 @@ public class DiscountService implements IDiscountService {
         user.setDiscounts(usersDiscounts);
         userRepository.save(user);
         return true;
+    }
+
+    @Override
+    public List<DiscountDto> getDiscountsOfUser(String userLogin){
+        List<Discount> discounts = discountRepository.findByUserWithThisDiscount_Login(userLogin);
+        List<DiscountDto> discountDtos = discounts.stream().map(x -> mapper.map(x, DiscountDto.class)).toList();
+        if (discountDtos == null) throw new RuntimeException("Błąd podczas pobierania danucych)");
+        if (discountDtos.size() == 0) throw new ResourceNotFoundException("Nie znaleziono zniżek dla tego użytkownika");
+        return discountDtos;
     }
 }
