@@ -1,6 +1,9 @@
 package com.example.toikprojekt2022.model;
 
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
@@ -22,16 +25,17 @@ public class User {
     private String expireDate;
     private String cvv;
     private String email;
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "cartOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<CartItem> shoppingCartItems;
-
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private List<Discount> discounts;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade = CascadeType.MERGE)
+    private List<Discount> usedDiscounts;
 
     public User(String login, String password, String name,
                 String surname, String address, String debitCardNumber,
                 String expireDate, String cvv, String email, List<Discount> userWithThisDiscount) {
-        this.discounts = userWithThisDiscount;
+        this.usedDiscounts = userWithThisDiscount;
         this.userId = UUID.randomUUID();
         this.login = login;
         this.password = password;
@@ -56,7 +60,7 @@ public class User {
         this.debitCardNumber=user.getDebitCardNumber();
         this.expireDate=user.getExpireDate();
         this.email=user.getEmail();
-        this.discounts=user.getDiscounts();
+        this.usedDiscounts =user.getUsedDiscounts();
     }
 
     public User() {
@@ -100,7 +104,7 @@ public class User {
         this.cvv = cvv;
         this.email = email;
         this.shoppingCartItems = shoppingCartItems;
-        this.discounts = discounts;
+        this.usedDiscounts = discounts;
     }
 
     public List<CartItem> getShoppingCartItems() {
@@ -111,12 +115,12 @@ public class User {
         this.shoppingCartItems = shoppingCartItems;
     }
 
-    public List<Discount> getDiscounts() {
-        return discounts;
+    public List<Discount> getUsedDiscounts() {
+        return usedDiscounts;
     }
 
-    public void setDiscounts(List<Discount> discounts) {
-        this.discounts = discounts;
+    public void setUsedDiscounts(List<Discount> usedDiscounts) {
+        this.usedDiscounts = usedDiscounts;
     }
 
     public String getName() {

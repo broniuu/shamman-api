@@ -2,12 +2,15 @@ package com.example.toikprojekt2022.service;
 
 import com.example.toikprojekt2022.dto.DiscountDto;
 import com.example.toikprojekt2022.dto.DiscountToViewDto;
+import com.example.toikprojekt2022.dto.DishWithDiscountDto;
 import com.example.toikprojekt2022.exception.DishNotFoundException;
 import com.example.toikprojekt2022.exception.ResourceNotFoundException;
 import com.example.toikprojekt2022.extension.DiscountExtension;
 import com.example.toikprojekt2022.model.Discount;
+import com.example.toikprojekt2022.model.Dish;
 import com.example.toikprojekt2022.model.User;
 import com.example.toikprojekt2022.repository.DiscountRepository;
+import com.example.toikprojekt2022.repository.DishRepository;
 import com.example.toikprojekt2022.repository.UserRepository;
 import lombok.experimental.ExtensionMethod;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -17,8 +20,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,9 +32,11 @@ public class DiscountService implements IDiscountService {
     private DiscountRepository discountRepository;
     private UserRepository userRepository;
     private final Mapper mapper;
-    public DiscountService(DiscountRepository discountRepository, UserRepository userRepository) {
+    private DishRepository dishRepository;
+    public DiscountService(DiscountRepository discountRepository, UserRepository userRepository, DishRepository dishRepository) {
         this.discountRepository = discountRepository;
         this.userRepository = userRepository;
+        this.dishRepository = dishRepository;
         this.mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
@@ -56,7 +59,7 @@ public class DiscountService implements IDiscountService {
     }
 
     @Override
-    public boolean tryUnlockDiscount(UUID discountId, String discountCode, String login) {
+    public DishWithDiscountDto tryUnlockDiscount(UUID discountId, String discountCode, String login) {
         Optional<Discount> probableDiscount = discountRepository.findById(discountId);
         if(probableDiscount.isEmpty())
             throw new RuntimeException("Zniżka o podanym Id nie istnieje");
@@ -66,19 +69,37 @@ public class DiscountService implements IDiscountService {
         User user = userRepository.findByLogin(login);
         if(user == null)
             throw new RuntimeException("Użytkownik o podanym loginie nie istnieje!");
-        List<User> usersWithThisDiscount = discount.getUserWithThisDiscount();
+        boolean discountWasUsedByThisUser = discountRepository.existsByDiscountIdAndUsersWhoUsedThisDiscount(discountId, user);
+        if(discountWasUsedByThisUser){
+            throw new RuntimeException("Użytkownik już wykorzystał tą zniżkę!");
+        }
+        List<User> usersWithThisDiscount = discount.getUsersWhoUsedThisDiscount();
         usersWithThisDiscount.add(user);
-        discount.setUserWithThisDiscount(usersWithThisDiscount);
-        discountRepository.save(discount);
-//        List<Discount> usersDiscounts = user.getDiscounts();
-//        usersDiscounts.add(discount);
-//        user.setDiscounts(usersDiscounts);
-        return true;
+        discount.setUsersWhoUsedThisDiscount(usersWithThisDiscount);
+        Discount savedDiscount = discountRepository.save(discount);
+        if (savedDiscount == null){
+            throw new RuntimeException("Błąd podczas zapisu zniżki w bazie danych!");
+        }
+        Dish dishWithThisDiscount = dishRepository.findById(discount.getDishId()).orElseThrow(() ->
+                new RuntimeException("Nie istnieje danie z tą zniżką!")
+        );
+        DishWithDiscountDto dishWithDiscountDto = new DishWithDiscountDto();
+        dishWithDiscountDto.setDishId(dishWithDiscountDto.getDishId());
+        dishWithDiscountDto.setName(dishWithThisDiscount.getName());
+        double oldPrize = dishWithThisDiscount.getPrice();
+        dishWithDiscountDto.setOldPrice(oldPrize);
+        double discountValue = discount.getDiscountValue();
+        dishWithDiscountDto.setPercentageDiscount(discountValue);
+        double moneySavedOnDiscount = oldPrize * discountValue;
+        dishWithDiscountDto.setSavedMoney(moneySavedOnDiscount);
+        double newPrize = oldPrize - moneySavedOnDiscount;
+        dishWithDiscountDto.setNewPrice(newPrize);
+        return dishWithDiscountDto;
     }
 
     @Override
     public List<DiscountDto> getDiscountsOfUser(String userLogin){
-        List<Discount> discounts = discountRepository.findByUserWithThisDiscount_Login(userLogin);
+        List<Discount> discounts = discountRepository.findAllByUsersWhoUsedThisDiscount(userLogin);
         List<DiscountDto> discountDtos = discounts.stream().map(x -> mapper.map(x, DiscountDto.class)).toList();
         if (discountDtos == null) throw new RuntimeException("Błąd podczas pobierania danucych)");
         if (discountDtos.size() == 0) throw new ResourceNotFoundException("Nie znaleziono zniżek dla tego użytkownika");

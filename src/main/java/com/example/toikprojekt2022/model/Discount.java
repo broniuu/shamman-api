@@ -1,14 +1,14 @@
 package com.example.toikprojekt2022.model;
 
 import lombok.Data;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -29,7 +29,7 @@ public class Discount {
     @JoinColumn(name = "dishId", nullable = false)
     private Dish dish;
     @ManyToMany
-    List<User> userWithThisDiscount;
+    private List<User> usersWhoUsedThisDiscount;
     @Transient
     private final static int discountCodeLength = 8;
 
@@ -57,12 +57,12 @@ public class Discount {
         return output ;
     }
 
-    public List<User> getUserWithThisDiscount() {
-        return userWithThisDiscount;
+    public List<User> getUsersWhoUsedThisDiscount() {
+        return usersWhoUsedThisDiscount;
     }
 
-    public void setUserWithThisDiscount(List<User> userWithThisDiscount) {
-        this.userWithThisDiscount = userWithThisDiscount;
+    public void setUsersWhoUsedThisDiscount(List<User> usersWhoUsedThisDiscount) {
+        this.usersWhoUsedThisDiscount = usersWhoUsedThisDiscount;
     }
 
     public double getDiscountValue() {

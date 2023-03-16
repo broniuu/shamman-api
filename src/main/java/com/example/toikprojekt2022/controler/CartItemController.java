@@ -56,8 +56,6 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
         }else{
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-
     }
     /**
      * Wyświetla konkretne danie z koszyka danego użytkownika
@@ -73,7 +71,6 @@ String thankYouNote="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ph
         }else{
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
     }
     /**
      * Dodaje danie do koszyka

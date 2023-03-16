@@ -1,9 +1,5 @@
 package com.example.toikprojekt2022.dto;
 
-import com.example.toikprojekt2022.model.Dish;
-import com.example.toikprojekt2022.model.User;
-
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +11,7 @@ public class DiscountDto {
     private String discountCode;
     private LocalDate expireDate;
     private DishDto dish;
-    private List<UserDto> userWithThisDiscount;
+    private List<UserDto> usersWhoUsedThisDiscount;
 
     public UUID getDiscountId() {
         return discountId;
@@ -65,11 +61,11 @@ public class DiscountDto {
         this.dish = dish;
     }
 
-    public List<UserDto> getUserWithThisDiscount() {
-        return userWithThisDiscount;
+    public List<UserDto> getUsersWhoUsedThisDiscount() {
+        return usersWhoUsedThisDiscount;
     }
 
-    public void setUserWithThisDiscount(List<UserDto> userWithThisDiscount) {
-        this.userWithThisDiscount = userWithThisDiscount;
+    public void setUsersWhoUsedThisDiscount(List<UserDto> usersWhoUsedThisDiscount) {
+        this.usersWhoUsedThisDiscount = usersWhoUsedThisDiscount;
     }
 }

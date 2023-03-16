@@ -2,8 +2,10 @@ package com.example.toikprojekt2022.controler;
 
 import com.example.toikprojekt2022.dto.DiscountDto;
 import com.example.toikprojekt2022.dto.DiscountToViewDto;
+import com.example.toikprojekt2022.dto.DishWithDiscountDto;
 import com.example.toikprojekt2022.dto.UnlockDiscountDto;
 import com.example.toikprojekt2022.repository.DiscountRepository;
+import com.example.toikprojekt2022.repository.DishRepository;
 import com.example.toikprojekt2022.repository.UserRepository;
 import com.example.toikprojekt2022.service.DiscountService;
 import com.example.toikprojekt2022.service.IDiscountService;
@@ -22,8 +24,8 @@ import java.util.UUID;
 @RestController
 public class DiscountController {
     private final IDiscountService discountService;
-    public DiscountController(DiscountRepository discountRepository, UserRepository userRepository) {
-        this.discountService = new DiscountService(discountRepository, userRepository);
+    public DiscountController(DiscountRepository discountRepository, UserRepository userRepository, DishRepository dishRepository) {
+        this.discountService = new DiscountService(discountRepository, userRepository, dishRepository);
     }
 
     /**
@@ -40,13 +42,12 @@ public class DiscountController {
     }
 
     @PostMapping(value = "/discounts/{discountId}/unlockDiscount")
-    public ResponseEntity unlockDiscount(
+    public ResponseEntity<DishWithDiscountDto> unlockDiscount(
             @RequestBody UnlockDiscountDto unlockDiscountDto,
             @PathVariable UUID discountId) {
-        boolean unlockingDiscountSuccess = discountService.tryUnlockDiscount(
+        DishWithDiscountDto dishWithDiscountDto = discountService.tryUnlockDiscount(
                 discountId, unlockDiscountDto.getUnlockCode(), unlockDiscountDto.getUserLogin());
-        HttpStatus status = unlockingDiscountSuccess ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-        return new ResponseEntity(status);
+        return new ResponseEntity(dishWithDiscountDto, HttpStatus.OK);
     }
 
     @GetMapping("/{login}/discounts")
