@@ -2,6 +2,8 @@ package com.example.toikprojekt2022.dto;
 
 import com.beust.jcommander.IStringConverter;
 
+import java.text.DecimalFormat;
+
 public class DishWithDiscountDto {
     private int dishId;
     private String name;
@@ -60,7 +62,8 @@ public class DishWithDiscountDto {
 
     public void setPercentageDiscount(double discountValue) {
         double discountConvertedToPercent = discountValue * 100;
-        String discountPercentText = String.valueOf(discountConvertedToPercent);
+        DecimalFormat decimalFormat = new DecimalFormat("0");
+        String discountPercentText = decimalFormat.format(discountConvertedToPercent);
         this.percentageDiscount = discountPercentText + " %";
     }
 }
