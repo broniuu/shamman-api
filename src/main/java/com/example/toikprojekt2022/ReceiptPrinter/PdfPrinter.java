@@ -1,6 +1,7 @@
 package com.example.toikprojekt2022.ReceiptPrinter;
 
 import com.example.toikprojekt2022.dto.CartItemDto;
+import com.example.toikprojekt2022.dto.DishWithDiscountDto;
 import com.example.toikprojekt2022.model.User;
 import com.google.zxing.WriterException;
 import com.itextpdf.io.image.ImageData;
@@ -45,7 +46,12 @@ public class PdfPrinter {
      * @throws IOException
      * @throws WriterException
      */
-    public static ByteArrayOutputStream makePdf(User currentUser, List<CartItemDto> cartItems, boolean delivery, String note) throws IOException, WriterException {
+    public static ByteArrayOutputStream makePdf(
+            User currentUser,
+            List<CartItemDto> cartItems,
+            boolean delivery,
+            String note,
+            double savedMoney) throws IOException, WriterException {
         String filename= "Rachunek.pdf";
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -68,6 +74,7 @@ public class PdfPrinter {
             qrOrders.append(cartItem.getDish().getName()).append(" x").append(cartItem.getCountOfDish());
             it++;
         }
+        price -= savedMoney;
         PdfDocument pdfDocument=new PdfDocument(pdfWriter);
         pdfDocument.addNewPage();
         Document document=new Document(pdfDocument);
