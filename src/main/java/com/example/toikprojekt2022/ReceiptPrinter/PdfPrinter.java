@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
 
@@ -74,7 +75,6 @@ public class PdfPrinter {
             qrOrders.append(cartItem.getDish().getName()).append(" x").append(cartItem.getCountOfDish());
             it++;
         }
-        price -= savedMoney;
         PdfDocument pdfDocument=new PdfDocument(pdfWriter);
         pdfDocument.addNewPage();
         Document document=new Document(pdfDocument);
@@ -120,12 +120,19 @@ public class PdfPrinter {
         customerOrder.setBorder(Border.NO_BORDER).setFontSize(12);
         Table summary=new Table(columnWidth);
         summary.setBackgroundColor(new DeviceRgb(65,123,243));
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        var finalPrice = price - savedMoney;
+        var formattedPrice = decimalFormat.format(price);
+        var formattedFinalPrice = decimalFormat.format(finalPrice);
+        var finalPriceDescription = "Final price: " + formattedFinalPrice + "zl";
+        var priceWithoutDiscountDescription = savedMoney != 0 ? "Price without discount: " + formattedPrice + "zl" : "";
         summary.addCell(new Cell()
                 .setFontColor(Color.WHITE)
-                .add("Price: "+price+"zl")
+                .add(finalPriceDescription)
+                .add(priceWithoutDiscountDescription)
                 .setMargin(20f)
                 .setMarginBottom(20f)
-                .setFontSize(20f).setBorder(Border.NO_BORDER)
+                .setFontSize(17f).setBorder(Border.NO_BORDER)
                 .setFontColor(Color.WHITE));
         if(delivery)summary.addCell("Delivery: YES") .setFontColor(Color.WHITE);else summary.addCell("Delivery: NO") .setFontColor(Color.WHITE);
         if(!note.isEmpty())summary.addCell(note) .setFontColor(Color.WHITE);

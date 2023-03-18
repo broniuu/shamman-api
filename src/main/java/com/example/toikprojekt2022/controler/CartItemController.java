@@ -4,6 +4,7 @@ import com.example.toikprojekt2022.dto.CartItemDto;
 import com.example.toikprojekt2022.dto.CheckoutDto;
 import com.example.toikprojekt2022.dto.DishWithDiscountDto;
 import com.example.toikprojekt2022.exception.ResourceNotFoundException;
+import com.example.toikprojekt2022.model.Discount;
 import com.example.toikprojekt2022.service.DiscountService;
 import com.example.toikprojekt2022.service.ICartItemService;
 import com.example.toikprojekt2022.service.IDiscountService;
@@ -167,7 +168,7 @@ public class CartItemController {
             boolean delivery = checkoutDto.getDelivery();
             String note = checkoutDto.getNote();
             var discount = discountService.saveUsedDiscountWithItsOwner(checkoutDto.getDiscountCode(), login, cartItemDtos);
-            var savedMoney = discount.getDish().getPrice() * discount.getDiscountValue();
+            var savedMoney = calculateSavedMoney(discount, cartItemDtos);
             ByteArrayOutputStream rawPdf = makePdf(userService.showUserAccount(login), cartItemDtos, delivery, note, savedMoney);
             ResponseEntity<byte[]> pdf = new ResponseEntity<byte[]>(rawPdf.toByteArray(), headers, HttpStatus.OK);
             cartItemDtos.forEach((cartItem) -> cartItemService.deleteCartItem(login, cartItem.getCartItemId()));
@@ -179,6 +180,14 @@ public class CartItemController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
+    }
+
+    private double calculateSavedMoney(Discount discount, List<CartItemDto> cartItemDtos){
+        var countOfDishesWithThisDiscount = cartItemDtos.stream()
+                .filter(x -> x.getDish().getDishId().equals(discount.getDishId()))
+                .count();
+        var moneySavedFromOneDish = discount.getDish().getPrice() * discount.getDiscountValue();
+        return moneySavedFromOneDish * countOfDishesWithThisDiscount;
     }
 
     private HttpHeaders prepareHeadersForPdf() {

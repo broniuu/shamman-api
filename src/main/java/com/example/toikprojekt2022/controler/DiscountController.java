@@ -24,8 +24,8 @@ import java.util.UUID;
 @RestController
 public class DiscountController {
     private final IDiscountService discountService;
-    public DiscountController(DiscountRepository discountRepository, UserRepository userRepository, DishRepository dishRepository) {
-        this.discountService = new DiscountService(discountRepository, userRepository, dishRepository);
+    public DiscountController(DiscountRepository discountRepository, UserRepository userRepository) {
+        this.discountService = new DiscountService(discountRepository, userRepository);
     }
 
     /**
