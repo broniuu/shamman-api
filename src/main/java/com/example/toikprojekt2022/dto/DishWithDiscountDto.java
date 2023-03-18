@@ -5,24 +5,22 @@ import com.beust.jcommander.IStringConverter;
 public class DishWithDiscountDto {
     private int dishId;
     private String name;
-    private double oldPrice;
-    private double newPrice;
+    private String oldPrice;
+    private String newPrice;
     private String percentageDiscount;
+    private String savedMoney;
 
     public void setPercentageDiscount(String percentageDiscount) {
         this.percentageDiscount = percentageDiscount;
     }
 
-    public double getSavedMoney() {
+    public String getSavedMoney() {
         return savedMoney;
     }
 
-    public void setSavedMoney(double savedMoney) {
+    public void setSavedMoney(String savedMoney) {
         this.savedMoney = savedMoney;
     }
-
-    private double savedMoney;
-
     public int getDishId() {
         return dishId;
     }
@@ -39,19 +37,20 @@ public class DishWithDiscountDto {
         this.name = name;
     }
 
-    public double getOldPrice() {
+    public String getOldPrice() {
         return oldPrice;
     }
 
-    public void setOldPrice(double oldPrice) {
+    public void setOldPrice(String oldPrice) {
         this.oldPrice = oldPrice;
     }
 
-    public double getNewPrice() {
+    public String getNewPrice() {
         return newPrice;
     }
 
-    public void setNewPrice(double newPrice) {
+    public void setNewPrice(String newPrice) {
+
         this.newPrice = newPrice;
     }
 

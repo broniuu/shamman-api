@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,14 +81,18 @@ public class DiscountService implements IDiscountService {
         DishWithDiscountDto dishWithDiscountDto = new DishWithDiscountDto();
         dishWithDiscountDto.setDishId(dishWithDiscountDto.getDishId());
         dishWithDiscountDto.setName(dishWithThisDiscount.getName());
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
         double oldPrize = dishWithThisDiscount.getPrice();
-        dishWithDiscountDto.setOldPrice(oldPrize);
+        String formattedOldPrize = decimalFormat.format(oldPrize);
+        dishWithDiscountDto.setOldPrice(formattedOldPrize);
         double discountValue = discount.getDiscountValue();
         dishWithDiscountDto.setPercentageDiscount(discountValue);
         double moneySavedOnDiscount = oldPrize * discountValue;
-        dishWithDiscountDto.setSavedMoney(moneySavedOnDiscount);
+        String formattedMoneySavedOnDiscount = decimalFormat.format(moneySavedOnDiscount);
+        dishWithDiscountDto.setSavedMoney(formattedMoneySavedOnDiscount);
         double newPrize = oldPrize - moneySavedOnDiscount;
-        dishWithDiscountDto.setNewPrice(newPrize);
+        String formattedNewPrize = decimalFormat.format(newPrize);
+        dishWithDiscountDto.setNewPrice(formattedNewPrize);
         return dishWithDiscountDto;
     }
 
