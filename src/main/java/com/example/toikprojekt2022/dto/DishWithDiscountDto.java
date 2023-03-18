@@ -3,9 +3,10 @@ package com.example.toikprojekt2022.dto;
 import com.beust.jcommander.IStringConverter;
 
 import java.text.DecimalFormat;
+import java.util.UUID;
 
 public class DishWithDiscountDto {
-    private int dishId;
+    private UUID dishId;
     private String name;
     private String oldPrice;
     private String newPrice;
@@ -23,11 +24,11 @@ public class DishWithDiscountDto {
     public void setSavedMoney(String savedMoney) {
         this.savedMoney = savedMoney;
     }
-    public int getDishId() {
+    public UUID getDishId() {
         return dishId;
     }
 
-    public void setDishId(int dishId) {
+    public void setDishId(UUID dishId) {
         this.dishId = dishId;
     }
 

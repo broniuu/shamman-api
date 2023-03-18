@@ -79,7 +79,7 @@ public class DiscountService implements IDiscountService {
                 new RuntimeException("Nie istnieje danie z tą zniżką!")
         );
         DishWithDiscountDto dishWithDiscountDto = new DishWithDiscountDto();
-        dishWithDiscountDto.setDishId(dishWithDiscountDto.getDishId());
+        dishWithDiscountDto.setDishId(dishWithThisDiscount.getDishId());
         dishWithDiscountDto.setName(dishWithThisDiscount.getName());
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         double oldPrize = dishWithThisDiscount.getPrice();
