@@ -41,13 +41,12 @@ public class DiscountController {
         return new ResponseEntity<>(discountDto, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/discounts/{discountId}/unlockDiscount")
+    @PostMapping(value = "/discounts/unlockDiscount")
     public ResponseEntity<DishWithDiscountDto> unlockDiscount(
-            @RequestBody UnlockDiscountDto unlockDiscountDto,
-            @PathVariable UUID discountId) {
+            @RequestBody UnlockDiscountDto unlockDiscountDto) {
         DishWithDiscountDto dishWithDiscountDto = discountService.tryUnlockDiscount(
-                discountId, unlockDiscountDto.getUnlockCode(), unlockDiscountDto.getUserLogin());
-        return new ResponseEntity(dishWithDiscountDto, HttpStatus.OK);
+                unlockDiscountDto.getUnlockCode(), unlockDiscountDto.getUserLogin());
+        return new ResponseEntity<>(dishWithDiscountDto, HttpStatus.OK);
     }
 
     @GetMapping("/{login}/discounts")

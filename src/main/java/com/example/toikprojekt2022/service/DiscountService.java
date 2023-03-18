@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -29,10 +28,11 @@ import java.util.UUID;
  */
 @ExtensionMethod({DiscountExtension.class})
 public class DiscountService implements IDiscountService {
-    private DiscountRepository discountRepository;
-    private UserRepository userRepository;
+    private final DiscountRepository discountRepository;
+    private final UserRepository userRepository;
     private final Mapper mapper;
-    private DishRepository dishRepository;
+    private final DishRepository dishRepository;
+
     public DiscountService(DiscountRepository discountRepository, UserRepository userRepository, DishRepository dishRepository) {
         this.discountRepository = discountRepository;
         this.userRepository = userRepository;
@@ -43,8 +43,8 @@ public class DiscountService implements IDiscountService {
     /**
      * Pobiera wszystkie zniżki na danej stronie
      *
-     * @param pageNumber    numer strony
-     * @return              wszystkie zniżki na danej stronie
+     * @param pageNumber numer strony
+     * @return wszystkie zniżki na danej stronie
      */
     @Override
     public Page<DiscountToViewDto> findDiscountDtos(int pageNumber) {
@@ -52,34 +52,28 @@ public class DiscountService implements IDiscountService {
         List<Discount> discounts = (List<Discount>) discountRepository.findAll();
         int discountsTotal = discounts.size();
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Discount> discountPage = new PageImpl<>(discounts,pageable,discountsTotal);
+        Page<Discount> discountPage = new PageImpl<>(discounts, pageable, discountsTotal);
         if (discounts.isEmpty() || discountPage.getTotalElements() > discountsTotal)
             throw new DishNotFoundException("There is no discounts on this page");
         return discountPage.map(discount -> discount.toDiscountDto());
     }
 
     @Override
-    public DishWithDiscountDto tryUnlockDiscount(UUID discountId, String discountCode, String login) {
-        Optional<Discount> probableDiscount = discountRepository.findById(discountId);
-        if(probableDiscount.isEmpty())
-            throw new RuntimeException("Zniżka o podanym Id nie istnieje");
-        Discount discount = probableDiscount.get();
-        if (!discount.getDiscountCode().equals(discountCode))
-            throw new RuntimeException("Podano nieporpawny Kod Rabatowy");
+    public DishWithDiscountDto tryUnlockDiscount(String discountCode, String login) {
+        Discount discount = discountRepository.findByDiscountCode(discountCode)
+                .orElseThrow(() -> new RuntimeException("Podano nieporpawny Kod Rabatowy"));
         User user = userRepository.findByLogin(login);
-        if(user == null)
+        if (user == null)
             throw new RuntimeException("Użytkownik o podanym loginie nie istnieje!");
+        UUID discountId = discount.getDiscountId();
         boolean discountWasUsedByThisUser = discountRepository.existsByDiscountIdAndUsersWhoUsedThisDiscount(discountId, user);
-        if(discountWasUsedByThisUser){
+        if (discountWasUsedByThisUser) {
             throw new RuntimeException("Użytkownik już wykorzystał tą zniżkę!");
         }
         List<User> usersWithThisDiscount = discount.getUsersWhoUsedThisDiscount();
         usersWithThisDiscount.add(user);
         discount.setUsersWhoUsedThisDiscount(usersWithThisDiscount);
-        Discount savedDiscount = discountRepository.save(discount);
-        if (savedDiscount == null){
-            throw new RuntimeException("Błąd podczas zapisu zniżki w bazie danych!");
-        }
+        discountRepository.save(discount);
         Dish dishWithThisDiscount = dishRepository.findById(discount.getDishId()).orElseThrow(() ->
                 new RuntimeException("Nie istnieje danie z tą zniżką!")
         );
@@ -98,10 +92,9 @@ public class DiscountService implements IDiscountService {
     }
 
     @Override
-    public List<DiscountDto> getDiscountsOfUser(String userLogin){
+    public List<DiscountDto> getDiscountsOfUser(String userLogin) {
         List<Discount> discounts = discountRepository.findAllByUsersWhoUsedThisDiscount(userLogin);
         List<DiscountDto> discountDtos = discounts.stream().map(x -> mapper.map(x, DiscountDto.class)).toList();
-        if (discountDtos == null) throw new RuntimeException("Błąd podczas pobierania danucych)");
         if (discountDtos.size() == 0) throw new ResourceNotFoundException("Nie znaleziono zniżek dla tego użytkownika");
         return discountDtos;
     }

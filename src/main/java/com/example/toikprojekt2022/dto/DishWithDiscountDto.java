@@ -62,6 +62,6 @@ public class DishWithDiscountDto {
     public void setPercentageDiscount(double discountValue) {
         double discountConvertedToPercent = discountValue * 100;
         String discountPercentText = String.valueOf(discountConvertedToPercent);
-        this.percentageDiscount = discountPercentText;
+        this.percentageDiscount = discountPercentText + " %";
     }
 }

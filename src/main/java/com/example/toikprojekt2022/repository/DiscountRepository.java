@@ -12,9 +12,8 @@ import java.util.UUID;
  */
 public interface DiscountRepository extends CrudRepository<Discount, UUID> {
     List<Discount> findAllByUsersWhoUsedThisDiscount(String login);
-
     boolean existsByDiscountIdAndUsersWhoUsedThisDiscount(UUID discountId, User userWhoUsedThisDiscount);
-    Discount findByDiscountCode(String discountCode);
+    Optional<Discount> findByDiscountCode(String discountCode);
     /**
      * znajduje zniżkę, na podane danie
      *
