@@ -56,7 +56,7 @@ public class CartItemService implements ICartItemService {
      */
 
     @Override
-    public Iterable<CartItemDto> findCartItemsWithDiscountPriceByOwnersLogin(String login) throws ResourceNotFoundException {
+    public List<CartItemDto> findCartItemsWithDiscountPriceByOwnersLogin(String login) throws ResourceNotFoundException {
         List<CartItem> cartItems = (List<CartItem>) cartItemRepository.findAllByCartOwnerLogin(login);
         if (cartItems.isEmpty()) throw new ResourceNotFoundException("Not found CartItems of user " + login);
         List<CartItemDto> cartItemDtos = new ArrayList<>();

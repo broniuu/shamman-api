@@ -1,5 +1,6 @@
 package com.example.toikprojekt2022.service;
 
+import com.example.toikprojekt2022.dto.CartItemDto;
 import com.example.toikprojekt2022.dto.DiscountDto;
 import com.example.toikprojekt2022.dto.DiscountToViewDto;
 import com.example.toikprojekt2022.dto.DishWithDiscountDto;
@@ -19,7 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +30,8 @@ import java.util.UUID;
 /**
  * Obsługuje operacje związane z zarządzaniem zniżkami
  */
+@Service
+@Transactional
 @ExtensionMethod({DiscountExtension.class})
 public class DiscountService implements IDiscountService {
     private final DiscountRepository discountRepository;
@@ -71,10 +76,6 @@ public class DiscountService implements IDiscountService {
         if (discountWasUsedByThisUser) {
             throw new RuntimeException("Użytkownik już wykorzystał tą zniżkę!");
         }
-        List<User> usersWithThisDiscount = discount.getUsersWhoUsedThisDiscount();
-        usersWithThisDiscount.add(user);
-        discount.setUsersWhoUsedThisDiscount(usersWithThisDiscount);
-        discountRepository.save(discount);
         Dish dishWithThisDiscount = dishRepository.findById(discount.getDishId()).orElseThrow(() ->
                 new RuntimeException("Nie istnieje danie z tą zniżką!")
         );
@@ -95,12 +96,25 @@ public class DiscountService implements IDiscountService {
         dishWithDiscountDto.setNewPrice(formattedNewPrize);
         return dishWithDiscountDto;
     }
-
     @Override
     public List<DiscountDto> getDiscountsOfUser(String userLogin) {
         List<Discount> discounts = discountRepository.findAllByUsersWhoUsedThisDiscount(userLogin);
         List<DiscountDto> discountDtos = discounts.stream().map(x -> mapper.map(x, DiscountDto.class)).toList();
         if (discountDtos.size() == 0) throw new ResourceNotFoundException("Nie znaleziono zniżek dla tego użytkownika");
         return discountDtos;
+    }
+    @Override
+    public void saveUsedDiscountWithItsOwner(String discountCode, String ownersLogin, List<CartItemDto> cartItemDtos){
+        Discount discount = discountRepository.findByDiscountCode(discountCode)
+                .orElseThrow(() -> new RuntimeException("Zniżka o podanym kodzie nie istnieje"));
+        if (cartItemDtos.stream().anyMatch(x -> x.getDish().getDishId() == discount.getDishId()))
+            throw new RuntimeException("Zniżka nie dotyczy żadnego z wybranych produktów!");
+        User discountOwner = userRepository.findByLogin(ownersLogin);
+        if (discountOwner == null)
+            throw new RuntimeException("Ten użytkownik nie istnieje");
+        List<User> usersWithThisDiscount = discount.getUsersWhoUsedThisDiscount();
+        usersWithThisDiscount.add(discountOwner);
+        discount.setUsersWhoUsedThisDiscount(usersWithThisDiscount);
+        discountRepository.save(discount);
     }
 }
