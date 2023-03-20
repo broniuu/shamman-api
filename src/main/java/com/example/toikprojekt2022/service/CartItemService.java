@@ -56,22 +56,10 @@ public class CartItemService implements ICartItemService {
      */
 
     @Override
-    public Iterable<CartItemDto> findCartItemsWithDiscountPriceByOwnersLogin(String login) throws ResourceNotFoundException {
+    public List<CartItemDto> findCartItemsWithDiscountPriceByOwnersLogin(String login) throws ResourceNotFoundException {
         List<CartItem> cartItems = (List<CartItem>) cartItemRepository.findAllByCartOwnerLogin(login);
         if (cartItems.isEmpty()) throw new ResourceNotFoundException("Not found CartItems of user " + login);
-        List<CartItemDto> cartItemDtos = new ArrayList<>();
-        for(CartItem cartItem : cartItems){
-            Discount discount = discountRepository.findByDishId(cartItem.getDishId());
-            if (discount != null) {
-                Dish dish = cartItem.getDish();
-                double priceWithDiscount = calculatePriceWithDiscount(discount);
-                dish.setPrice(priceWithDiscount);
-                cartItem.setDish(dish);
-            }
-            CartItemDto cartItemDto = mapper.map(cartItem, CartItemDto.class);
-            cartItemDtos.add(cartItemDto);
-        }
-        return cartItemDtos;
+        return cartItems.stream().map(x -> mapper.map(x, CartItemDto.class)).toList();
     }
 
     /**
