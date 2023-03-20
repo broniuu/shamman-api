@@ -158,26 +158,26 @@ public class CartItemController {
      * @throws IOException
      * @throws WriterException
      */
-    @GetMapping("{login}/usercart/checkout/{note}/{delivery}/{discountCode}")
-    public ResponseEntity<byte[]> checkout(@PathVariable String login, @PathVariable String note,@PathVariable String delivery,@PathVariable String discountCode) throws IOException, WriterException {
+    @PostMapping("{login}/usercart/checkout")
+    public ResponseEntity<byte[]> checkout(@PathVariable String login, @RequestBody CheckoutDto body) throws IOException, WriterException {
         if (checkUser(login)) {
-            note=note.replaceAll("_", " ");
+            String note=body.getNote();
+            String discountCode=body.getDiscountCode();
+            boolean delivery=body.getDelivery();
             List<CartItemDto> cartItemDtos = cartItemService.findCartItemsWithDiscountPriceByOwnersLogin(login);
             if (cartItemDtos == null)
                 throw new ResourceNotFoundException("The usercart is empty!");
             var headers = prepareHeadersForPdf();
             ByteArrayOutputStream rawPdf = null;
-            if(!discountCode.equals("brak")){
+            if(!discountCode.equals("") || !discountCode.isEmpty()){
                 var discount = discountService.saveUsedDiscountWithItsOwner(discountCode, login, cartItemDtos);
                 var savedMoney = calculateSavedMoney(discount, cartItemDtos);
-                 rawPdf = makePdf(userService.showUserAccount(login), cartItemDtos, Boolean.parseBoolean(delivery), note, savedMoney);
+                 rawPdf = makePdf(userService.showUserAccount(login), cartItemDtos, delivery, note, savedMoney);
             }else{
-                rawPdf = makePdf(userService.showUserAccount(login), cartItemDtos, Boolean.parseBoolean(delivery), note,0);
+                rawPdf = makePdf(userService.showUserAccount(login), cartItemDtos,delivery, note,0);
             }
-
             ResponseEntity<byte[]> pdf = new ResponseEntity<byte[]>(rawPdf.toByteArray(), headers, HttpStatus.OK);
             cartItemDtos.forEach((cartItem) -> cartItemService.deleteCartItem(login, cartItem.getCartItemId()));
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             Date date = new Date();
             sendEmail(rawPdf, userService.showUserAccount(login).getEmail(), "Receipt from:" + date, thankYouNote);
             return pdf;
