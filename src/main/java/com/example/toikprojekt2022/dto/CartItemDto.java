@@ -1,17 +1,13 @@
 package com.example.toikprojekt2022.dto;
 
-import com.example.toikprojekt2022.model.Dish;
 import com.example.toikprojekt2022.model.User;
-import com.google.zxing.WriterException;
 
-import javax.persistence.*;
-import java.io.IOException;
 import java.util.UUID;
 
 public class CartItemDto {
     private UUID cartItemId;
     private int countOfDish;
-    private User cartOwner;
+    private CartOwnerDto cartOwner;
     private DishDto dish;
 
     public UUID getCartItemId() {
@@ -30,11 +26,11 @@ public class CartItemDto {
         this.countOfDish = countOfDish;
     }
 
-    public User getCartOwner() {
+    public CartOwnerDto getCartOwner() {
         return cartOwner;
     }
 
-    public void setCartOwner(User cartOwner) {
+    public void setCartOwner(CartOwnerDto cartOwner) {
         this.cartOwner = cartOwner;
     }
 

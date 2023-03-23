@@ -31,4 +31,6 @@ public interface DishRepository extends PagingAndSortingRepository<Dish, UUID> {
     Page<Dish> findDishesByRestaurantName(UUID restaurantId, Pageable pageable);
     int countDishesByRestaurantId(UUID restaurantId);
 
+    Iterable<Dish> findDishesByRestaurantName(String name);
+
 }

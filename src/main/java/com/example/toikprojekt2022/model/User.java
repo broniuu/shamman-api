@@ -1,7 +1,8 @@
 package com.example.toikprojekt2022.model;
 
 
-import org.springframework.security.core.GrantedAuthority;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
@@ -24,12 +25,17 @@ public class User {
     private String expireDate;
     private String cvv;
     private String email;
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "cartOwner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<CartItem> shoppingCartItems;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade = CascadeType.MERGE)
+    private List<Discount> usedDiscounts;
 
     public User(String login, String password, String name,
                 String surname, String address, String debitCardNumber,
-                String expireDate, String cvv, String email) {
+                String expireDate, String cvv, String email, List<Discount> userWithThisDiscount) {
+        this.usedDiscounts = userWithThisDiscount;
         this.userId = UUID.randomUUID();
         this.login = login;
         this.password = password;
@@ -54,6 +60,7 @@ public class User {
         this.debitCardNumber=user.getDebitCardNumber();
         this.expireDate=user.getExpireDate();
         this.email=user.getEmail();
+        this.usedDiscounts =user.getUsedDiscounts();
     }
 
     public User() {
@@ -85,7 +92,7 @@ public class User {
                 String expireDate,
                 String cvv,
                 String email,
-                List<CartItem> shoppingCartItems) {
+                List<CartItem> shoppingCartItems, List<Discount> discounts) {
         this.userId = userId;
         this.login = login;
         this.password = password;
@@ -97,6 +104,23 @@ public class User {
         this.cvv = cvv;
         this.email = email;
         this.shoppingCartItems = shoppingCartItems;
+        this.usedDiscounts = discounts;
+    }
+
+    public List<CartItem> getShoppingCartItems() {
+        return shoppingCartItems;
+    }
+
+    public void setShoppingCartItems(List<CartItem> shoppingCartItems) {
+        this.shoppingCartItems = shoppingCartItems;
+    }
+
+    public List<Discount> getUsedDiscounts() {
+        return usedDiscounts;
+    }
+
+    public void setUsedDiscounts(List<Discount> usedDiscounts) {
+        this.usedDiscounts = usedDiscounts;
     }
 
     public String getName() {

@@ -3,6 +3,7 @@ package com.example.toikprojekt2022.data;
 import com.example.toikprojekt2022.model.*;
 import com.example.toikprojekt2022.repository.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -34,15 +35,69 @@ public class Seed {
         List<Restaurant> restaurants;
         if (restaurantRepository.count() == 0){
         restaurants = List.of(
-                new Restaurant("Restauracja u Jana" ,"https://restauracjaujana.pl/wp-content/uploads/2018/03/logo-text.png"),
-                new Restaurant("American Dream" ,"https://www.americanrestaurant.pl/wp-content/uploads/2019/01/american-restaurant-logo-footer-new-1.png"),
-                new Restaurant("Bistro Przepis" ,"https://restaumatic-production.imgix.net/uploads/restaurants/84699/logo/1629964980.png?auto=compress&crop=focalpoint&fit=clip&h=500&w=500"),
-                new Restaurant("Domowa Bistro" ,"https://zakupersi.com/wp-content/uploads/2020/04/glovo.png"),
-                new Restaurant("Restauracja Pyza" ,"https://restaumatic-production.imgix.net/uploads/restaurants/35383/logo/1591080813.png?auto=compress&crop=focalpoint&fit=max&h=200&w=200"),
-                new Restaurant("Restauracja Soprano" ,"https://restaumatic-production.imgix.net/uploads/restaurants/17770/logo/1507737005.png?auto=compress&crop=focalpoint&fit=clip&h=500&w=500"),
-                new Restaurant("Restauracja Różana" ,"http://www.rozana-batorego19.pl/wp-content/uploads/2020/02/81894919_110245320506614_5467250534652051456_o-300x254.jpg"),
-                new Restaurant("Restauracja Pół na Pół" ,"https://polnapol-tarnow.pl/wp/wp-content/uploads/2020/08/pnp_logo_2020-sierpien.png")
-
+                new Restaurant("Restauracja u Jana" ,
+                        "https://restauracjaujana.pl/wp-content/uploads/2018/03/logo-text.png",
+                        "https://media.istockphoto.com/id/1204371265/photo/flat-lay-of-turkish-traditional-foods-for-celebrating-holiday-wode-composition.jpg?s=612x612&w=0&k=20&c=X-9XA8TIOe-GxtYnojNLUfu-_rXR1Zab1GYqAu1ne64="
+                        , 3,
+                        "Piłsudzkiego",
+                        "23",
+                        "Tarnów"),
+                new Restaurant(
+                        "American Dream" ,
+                        "https://www.americanrestaurant.pl/wp-content/uploads/2019/01/american-restaurant-logo-footer-new-1.png",
+                        "https://media.istockphoto.com/id/1160937956/photo/flat-lay-of-meat-salads-snacks-and-blooming-mimosa-wide-composition.jpg?s=612x612&w=0&k=20&c=cscX-CM4VFli1FHgL4OSFFl0glgSnUX0Q8fES6KU2oA=",
+                        4,
+                        "Wałowa",
+                        "23",
+                        "Tarnów"),
+                new Restaurant(
+                        "Bistro Przepis" ,
+                        "https://restaumatic-production.imgix.net/uploads/restaurants/84699/logo/1629964980.png?auto=compress&crop=focalpoint&fit=clip&h=500&w=500",
+                        "https://burst.shopifycdn.com/photos/flatlay-iron-skillet-with-meat-and-other-food.jpg?width=1200&format=pjpg&exif=1&iptc=1",
+                        5,
+                        "Słowackiego",
+                       "1",
+                        "Tarnów"),
+                new Restaurant(
+                        "Domowa Bistro" ,
+                        "https://zakupersi.com/wp-content/uploads/2020/04/glovo.png",
+                        "https://media.istockphoto.com/id/1155240408/photo/table-filled-with-large-variety-of-food.jpg?s=612x612&w=0&k=20&c=uJEbKmR3wOxwdhQR_36as5WeP6_HDqfU-QmAq63OVEE=",
+                        4,
+                        "Krakowska",
+                        "15",
+                        "Tarnów"),
+                new Restaurant(
+                        "Restauracja Pyza" ,
+                        "https://restaumatic-production.imgix.net/uploads/restaurants/35383/logo/1591080813.png?auto=compress&crop=focalpoint&fit=max&h=200&w=200",
+                        "https://burst.shopifycdn.com/photos/flatlay-iron-skillet-with-meat-and-other-food.jpg?width=1200&format=pjpg&exif=1&iptc=1",
+                        2,
+                        "Rozwojowa",
+                        "22",
+                        "Tarnów"),
+                new Restaurant(
+                        "Restauracja Soprano" ,
+                        "https://restaumatic-production.imgix.net/uploads/restaurants/17770/logo/1507737005.png?auto=compress&crop=focalpoint&fit=clip&h=500&w=500",
+                        "https://thumbs.dreamstime.com/b/assorted-indian-recipes-food-various-spices-rice-wooden-table-92742528.jpg",
+                        5,
+                        "Narutowicza",
+                        "4",
+                        "Tarnów"),
+                new Restaurant(
+                        "Restauracja Różana" ,
+                        "http://www.rozana-batorego19.pl/wp-content/uploads/2020/02/81894919_110245320506614_5467250534652051456_o-300x254.jpg",
+                        "https://img.freepik.com/premium-photo/healthy-food-clean-eating-selection_79782-19.jpg",
+                        3,
+                        "Mickiewicza",
+                        "8",
+                        "Tarnów"),
+                new Restaurant(
+                        "Restauracja Pół na Pół" ,
+                        "https://polnapol-tarnow.pl/wp/wp-content/uploads/2020/08/pnp_logo_2020-sierpien.png",
+                        "https://thumbs.dreamstime.com/b/healthy-food-selection-healthy-food-selection-fruits-vegetables-seeds-superfood-cereals-gray-background-121936825.jpg",
+                        4,
+                       "Dworcowa",
+                        "8",
+                        "Tarnów")
         );
             restaurantRepository.saveAll(restaurants);
         } else {
@@ -906,12 +961,12 @@ public class Seed {
         }
         if (discountRepository.count() == 0){
             List<Discount> discounts = List.of(
-                    new Discount(dishes.get(3), 0.4),
-                    new Discount(dishes.get(5), 0.22),
-                    new Discount(dishes.get(7), 0.45),
-                    new Discount(dishes.get(8), 0.75),
-                    new Discount(dishes.get(9), 0.22),
-                    new Discount(dishes.get(22), 0.6)
+                    new Discount(dishes.get(3), 0.4, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(5), 0.22, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(7), 0.45, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(8), 0.75, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(9), 0.22, LocalDate.now().plusMonths(5)),
+                    new Discount(dishes.get(22), 0.6, LocalDate.now().plusMonths(5))
 
             );
 

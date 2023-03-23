@@ -57,13 +57,7 @@ public class DishService implements IDishService {
     @Override
     public Iterable<DishDto> findByRestaurantId(UUID id) {
         List<Dish> dishes = (List<Dish>) dishRepository.findByRestaurantId(id);
-        if (dishes.isEmpty()) throw new DishNotFoundException("There is no Dishes for this Restaurant. Your Restaurant ID may be wrong");
-        List<DishDto> DishDtos = new ArrayList<>();
-        for(Dish dish : dishes){
-            DishDto dishDto = mapper.map(dish, DishDto.class);
-            DishDtos.add(dishDto);
-        }
-        return DishDtos;
+        return convertToDishDtos(dishes);
     }
     /**
      * Znajduje dania po nazwie restauracij
@@ -73,7 +67,7 @@ public class DishService implements IDishService {
      * @return Zwraca liste Dam podzielonych na strony.
      */
     @Override
-    public Page<DishDto> findDishesByRestaurantName(String restaurantName, int pageNumber) {
+    public Page<DishDto> findPagedDishesByRestaurantName(String restaurantName, int pageNumber) {
         final int pageSize = 10;
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         UUID restaurantId = restaurantRepository.findRestaurantIdByName(restaurantName);
@@ -82,5 +76,21 @@ public class DishService implements IDishService {
         if (pagedDishes.isEmpty() || pagedDishes.getTotalElements() > maxCountOfDishes)
             throw new DishNotFoundException("There is no Dishes for this Restaurant on this page");
         return pagedDishes.map(dish -> mapper.map(dish, DishDto.class));
+    }
+
+    @Override
+    public Iterable<DishDto> findByRestaurantName(String restaurantName){
+        List<Dish> dishes = (List<Dish>) dishRepository.findDishesByRestaurantName(restaurantName);
+        return convertToDishDtos(dishes);
+    }
+
+    private Iterable<DishDto> convertToDishDtos(List<Dish> dishes) {
+        if (dishes.isEmpty()) throw new DishNotFoundException("There is no Dishes for this Restaurant. Your Restaurant ID may be wrong");
+        List<DishDto> DishDtos = new ArrayList<>();
+        for(Dish dish : dishes){
+            DishDto dishDto = mapper.map(dish, DishDto.class);
+            DishDtos.add(dishDto);
+        }
+        return DishDtos;
     }
 }
