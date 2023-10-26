@@ -45,7 +45,7 @@ public class UserController {
      * @throws RuntimeException
      */
     @PostMapping(value ="/user/registration")
-    public ResponseEntity<User> registerUserAccount(@RequestBody UserDto userDto) throws RuntimeException {
+    public ResponseEntity<User>registerUserAccount(@RequestBody UserDto userDto) throws RuntimeException {
         User registered = userService.registerNewUserAccount(userDto);
 
         return new ResponseEntity<>(registered, HttpStatus.OK);
@@ -58,6 +58,7 @@ public class UserController {
      * @return zalogowany użytkownik
      * @throws AuthenticationException
      */
+    @CrossOrigin
     @PostMapping(value ="/user/login")
     public Cookie token(@RequestBody LoginRequest userLogin) throws AuthenticationException {
         Authentication authentication = authenticationManager.authenticate(

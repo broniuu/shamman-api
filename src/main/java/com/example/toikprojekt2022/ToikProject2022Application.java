@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
@@ -42,5 +45,4 @@ public class ToikProject2022Application implements CommandLineRunner {
 		Seed seed = new Seed(userRepository,restaurantRepository,cartItemRepository,dishRepository,discountRepository);
 		seed.seedData();
 	}
-
 }
