@@ -105,7 +105,7 @@ public class CartItemController {
      */
     @DeleteMapping("{login}/usercart/{cartItemId}/delete")
     public ResponseEntity<CartItemDto> deleteCartItem(@PathVariable String login, @PathVariable UUID cartItemId) {
-        if (checkUser(login)) {
+        if (checkUser(login) || userService.checkRoleOfLoggedUser(login)) {
             CartItemDto cartItemDto = cartItemService.deleteCartItem(login, cartItemId);
             return new ResponseEntity<>(cartItemDto, HttpStatus.OK);
         } else {

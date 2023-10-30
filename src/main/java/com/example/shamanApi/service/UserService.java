@@ -7,10 +7,12 @@ import com.example.shamanApi.model.User;
 import com.example.shamanApi.repository.UserRepository;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 
 /**
  * Obsługuje operacje związane z zarządzaniem użytkownikami
@@ -20,7 +22,6 @@ import javax.transaction.Transactional;
 public class UserService implements IUserService{
     private final UserRepository userRepository;
     private final Mapper mapper;
-
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -119,6 +120,13 @@ public class UserService implements IUserService{
                     + login);
         }
         return userRepository.findByLogin(login);
+    }
+
+    @Override
+    public boolean checkRoleOfLoggedUser(String roleName) {
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByLogin(login);
+        return user.getRoles().stream().anyMatch(r -> Objects.equals(r.getName(), roleName));
     }
 
     /**
