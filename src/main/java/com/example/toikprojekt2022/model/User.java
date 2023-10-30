@@ -31,11 +31,20 @@ public class User {
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.MERGE)
     private List<Discount> usedDiscounts;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "roleId"))
+    private List<Role> roles;
 
-    public User(String login, String password, String name,
-                String surname, String address, String debitCardNumber,
-                String expireDate, String cvv, String email, List<Discount> userWithThisDiscount) {
-        this.usedDiscounts = userWithThisDiscount;
+    public User() {
+        this.userId = UUID.randomUUID();
+    }
+
+    public User(String login, String password, String name, String surname,
+                String address, String debitCardNumber, String expireDate, String cvv, String email, List<Role> roles) {
         this.userId = UUID.randomUUID();
         this.login = login;
         this.password = password;
@@ -46,26 +55,9 @@ public class User {
         this.expireDate = expireDate;
         this.cvv = cvv;
         this.email = email;
-
+        this.roles = roles;
     }
 
-    public User(User user) {
-        this.userId=user.getUserId();
-        this.login=user.getLogin();
-        this.password=user.getPassword();
-        this.name=user.getName();
-        this.surname=user.getSurname();
-        this.cvv=user.getCvv();
-        this.address=user.getAddress();
-        this.debitCardNumber=user.getDebitCardNumber();
-        this.expireDate=user.getExpireDate();
-        this.email=user.getEmail();
-        this.usedDiscounts =user.getUsedDiscounts();
-    }
-
-    public User() {
-        this.userId = UUID.randomUUID();
-    }
     @Override
     public String toString() {
         return "User{" +
@@ -80,31 +72,6 @@ public class User {
                 ", cvv='" + cvv + '\'' +
                 ", email='" + email + '\'' +
                 '}';
-    }
-
-    public User(UUID userId,
-                String login,
-                String password,
-                String name,
-                String surname,
-                String address,
-                String debitCardNumber,
-                String expireDate,
-                String cvv,
-                String email,
-                List<CartItem> shoppingCartItems, List<Discount> discounts) {
-        this.userId = userId;
-        this.login = login;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.address = address;
-        this.debitCardNumber = debitCardNumber;
-        this.expireDate = expireDate;
-        this.cvv = cvv;
-        this.email = email;
-        this.shoppingCartItems = shoppingCartItems;
-        this.usedDiscounts = discounts;
     }
 
     public List<CartItem> getShoppingCartItems() {
@@ -201,5 +168,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 }

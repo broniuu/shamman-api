@@ -1,20 +1,11 @@
 package com.example.toikprojekt2022;
 
 import com.example.toikprojekt2022.data.Seed;
-import com.example.toikprojekt2022.model.CartItem;
-import com.example.toikprojekt2022.model.Dish;
-import com.example.toikprojekt2022.model.Restaurant;
 import com.example.toikprojekt2022.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class ToikProject2022Application implements CommandLineRunner {
@@ -24,17 +15,21 @@ public class ToikProject2022Application implements CommandLineRunner {
 	private CartItemRepository cartItemRepository;
 	private DishRepository dishRepository;
 	private DiscountRepository discountRepository;
+	private RoleRepository roleRepository;
+	private PasswordEncoder passwordEncoder;
 
 	public ToikProject2022Application(UserRepository userRepository,
 									  RestaurantRepository restaurantRepository,
 									  CartItemRepository cartItemRepository,
 									  DishRepository dishRepository,
-									  DiscountRepository discountRepository) {
+									  DiscountRepository discountRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
 		this.restaurantRepository = restaurantRepository;
 		this.cartItemRepository = cartItemRepository;
 		this.dishRepository = dishRepository;
 		this.discountRepository = discountRepository;
+		this.roleRepository = roleRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(ToikProject2022Application.class, args);
@@ -42,7 +37,7 @@ public class ToikProject2022Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Seed seed = new Seed(userRepository,restaurantRepository,cartItemRepository,dishRepository,discountRepository);
+		Seed seed = new Seed(userRepository,restaurantRepository,cartItemRepository,dishRepository,discountRepository, roleRepository, passwordEncoder);
 		seed.seedData();
 	}
 }

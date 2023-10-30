@@ -11,4 +11,5 @@ public interface IUserService {
     User deleteUserAccount(String login);
     User updateUserAccount(String login, UserDto userDto);
     User showUserAccount(String login);
+    boolean checkRoleOfLoggedUser(String roleName);
 }

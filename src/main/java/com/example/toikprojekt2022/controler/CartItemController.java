@@ -2,17 +2,14 @@ package com.example.toikprojekt2022.controler;
 
 import com.example.toikprojekt2022.dto.CartItemDto;
 import com.example.toikprojekt2022.dto.CheckoutDto;
-import com.example.toikprojekt2022.dto.DishWithDiscountDto;
 import com.example.toikprojekt2022.exception.ResourceNotFoundException;
 import com.example.toikprojekt2022.model.Discount;
-import com.example.toikprojekt2022.service.DiscountService;
 import com.example.toikprojekt2022.service.ICartItemService;
 import com.example.toikprojekt2022.service.IDiscountService;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.domain.Page;
 import com.example.toikprojekt2022.service.UserService;
 import com.google.zxing.WriterException;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,12 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 import static com.example.toikprojekt2022.ReceiptPrinter.PdfPrinter.makePdf;
 import static com.example.toikprojekt2022.service.MailService.sendEmail;
@@ -111,7 +105,7 @@ public class CartItemController {
      */
     @DeleteMapping("{login}/usercart/{cartItemId}/delete")
     public ResponseEntity<CartItemDto> deleteCartItem(@PathVariable String login, @PathVariable UUID cartItemId) {
-        if (checkUser(login)) {
+        if (checkUser(login) || userService.checkRoleOfLoggedUser("admin")) {
             CartItemDto cartItemDto = cartItemService.deleteCartItem(login, cartItemId);
             return new ResponseEntity<>(cartItemDto, HttpStatus.OK);
         } else {
