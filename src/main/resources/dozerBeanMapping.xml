@@ -5,7 +5,7 @@
           http://dozer.sourceforge.net/schema/beanmapping.xsd">
     <configuration>
         <custom-converters>
-            <converter type="com.example.toikprojekt2022.converter.LocalDateConverter">
+            <converter type="com.example.shamanApi.converter.LocalDateConverter">
                 <class-a>java.time.LocalDate</class-a>
                 <class-b>java.time.LocalDate</class-b>
             </converter>
@@ -13,18 +13,18 @@
     </configuration>
     <mapping type="one-way">
         <class-a>java.util.UUID</class-a>
-        <class-b bean-factory="com.example.toikprojekt2022.factory.UuidBeanFactory">java.util.UUID</class-b>
+        <class-b bean-factory="com.example.shamanApi.factory.UuidBeanFactory">java.util.UUID</class-b>
     </mapping>
     <mapping>
-        <class-a>com.example.toikprojekt2022.model.User</class-a>
-        <class-b>com.example.toikprojekt2022.dto.UserDto</class-b>
+        <class-a>com.example.shamanApi.model.User</class-a>
+        <class-b>com.example.shamanApi.dto.UserDto</class-b>
     </mapping>
     <mapping>
-        <class-a>com.example.toikprojekt2022.model.Dish</class-a>
-        <class-b>com.example.toikprojekt2022.dto.DishDto</class-b>
+        <class-a>com.example.shamanApi.model.Dish</class-a>
+        <class-b>com.example.shamanApi.dto.DishDto</class-b>
     </mapping>
     <mapping>
-        <class-a>com.example.toikprojekt2022.model.CartItem</class-a>
-        <class-b>com.example.toikprojekt2022.dto.CartItemDto</class-b>
+        <class-a>com.example.shamanApi.model.CartItem</class-a>
+        <class-b>com.example.shamanApi.dto.CartItemDto</class-b>
     </mapping>
 </mappings>
