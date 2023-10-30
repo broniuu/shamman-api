@@ -2,6 +2,7 @@ package com.example.shamanApi.data;
 
 import com.example.shamanApi.model.*;
 import com.example.shamanApi.repository.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,10 +12,15 @@ import java.util.List;
  */
 public class Seed {
 
-    public Seed(UserRepository userRepository,
+    private RoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
+
+    public Seed(RoleRepository roleRepository, PasswordEncoder passwordEncoder, UserRepository userRepository,
                 RestaurantRepository restaurantRepository,
                 CartItemRepository cartItemRepository,
                 DishRepository dishRepository, DiscountRepository discountRepository) {
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
         this.cartItemRepository = cartItemRepository;
@@ -971,6 +977,39 @@ public class Seed {
             );
 
             discountRepository.saveAll(discounts);
+        }
+
+        Role admin = new Role("admin");
+        Role user = new Role("user");
+        if (roleRepository.count() == 0) {
+            List<Role> roles = List.of(admin, user);
+            roleRepository.saveAll(roles);
+        }
+        if (userRepository.count() == 0) {
+            List<User> users = List.of(new User(
+                            "broniq1",
+                            passwordEncoder.encode("bulka123"),
+                            "Filip",
+                            "Broniek",
+                            "Spacerowa 8",
+                            "234123123123",
+                            "12/34",
+                            "123",
+                            "kon@gmail.com",
+                            List.of(user, admin)
+                    ),
+                    new User("jchocho",
+                            passwordEncoder.encode("haslo123"),
+                            "Jakub",
+                            "Chocholowicz",
+                            "Polna 9",
+                            "134123123123",
+                            "12/33",
+                            "321",
+                            "jchocho@gmail.com",
+                            List.of(user)
+                    ));
+            userRepository.saveAll(users);
         }
     }
 }
