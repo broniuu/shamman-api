@@ -25,12 +25,14 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.sql.DataSource;
 
 /**
  * klasa konfigurująca bezpieczenstwo i dostęp do poszczegolnych end-pointów.
  * */
+@CrossOrigin
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurer  {
@@ -86,12 +88,13 @@ public class SecurityConfigurer  {
      * */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
+        return http.cors().and()
                 .csrf().disable()
                 .authorizeRequests( auth -> auth
                         .mvcMatchers("/user/**", "/restaurants/**","/discounts/**","/activity").permitAll()
                         .mvcMatchers("**/logout", "**/usercart/**", "/islogged").authenticated()
                         .anyRequest().authenticated()
+
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

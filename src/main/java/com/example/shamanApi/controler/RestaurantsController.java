@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Klasa obsługuje endpointy związane z restauracjami
  */
+@CrossOrigin
 @RestController
 public class RestaurantsController {
 
@@ -30,6 +31,7 @@ public class RestaurantsController {
      *
      * @return      lista restauracji
      */
+    @CrossOrigin
     @GetMapping("/restaurants")
 
     public ResponseEntity<Iterable<RestaurantDto>> getRestaurants(){
@@ -43,6 +45,7 @@ public class RestaurantsController {
      * @param restaurantName    nazwa restauracji do wyświetlenia
      * @return                  restauracja
      */
+    @CrossOrigin
     @GetMapping("/restaurants/{restaurantName}")
     public ResponseEntity<RestaurantDto> getRestaurantByName( @PathVariable String restaurantName){
          restaurantName= restaurantName.replaceAll("_"," ");

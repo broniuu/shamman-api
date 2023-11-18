@@ -6,6 +6,8 @@ import com.example.shamanApi.dto.UserDto;
 import com.example.shamanApi.repository.UserRepository;
 import com.example.shamanApi.service.TokenService;
 import com.example.shamanApi.service.UserService;
+import org.hibernate.annotations.Filter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,7 @@ import static com.example.shamanApi.security.Utilities.checkUser;
 /**
  * Klasa obsługuje endpointy związane z użytkownikiem
  */
+@CrossOrigin
 @RestController
 public class UserController {
     private final UserService userService;
@@ -44,8 +47,10 @@ public class UserController {
      * @return                      zarejestrowany użytkownik
      * @throws RuntimeException
      */
+    @CrossOrigin
     @PostMapping(value ="/user/registration")
     public ResponseEntity<User>registerUserAccount(@RequestBody UserDto userDto) throws RuntimeException {
+
         User registered = userService.registerNewUserAccount(userDto);
 
         return new ResponseEntity<>(registered, HttpStatus.OK);
@@ -80,14 +85,20 @@ public class UserController {
      * @param login     login do usuwanego konta
      * @return          usuwany użytkownik
      */
+    @CrossOrigin
     @DeleteMapping(value = "{login}/user/delete")
     public ResponseEntity<User> deleteUserAccount(@PathVariable String login) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Allow-Origin", "http://localhost:4200/settings"); // Set the allowed origin
+         responseHeaders.set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        responseHeaders.set("Access-Control-Allow-Headers", "x-requested-with, authorization");
+        responseHeaders.set("Access-Control-Allow-Credentials", "true");
         User deleted = null;
         if(checkUser(login)){
             deleted = userService.deleteUserAccount(login);
-            return new ResponseEntity<>(deleted, HttpStatus.OK);
+            return new ResponseEntity<>(deleted,responseHeaders, HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(responseHeaders,HttpStatus.FORBIDDEN);
         }
 
     }

@@ -7,10 +7,7 @@ import com.example.shamanApi.service.IRestaurantService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 /**
@@ -33,6 +30,7 @@ public class DishController {
      * @param restaurantName    nazwa restauracji
      * @param pageNumber    numer strony
      * */
+    @CrossOrigin
     @GetMapping(value = "/restaurants/{restaurantName}/dishes", params = {"p"})
     public ResponseEntity<Iterable<DishDto>> getPagedDishesByRestaurantName(
             @PathVariable String restaurantName,
@@ -48,6 +46,7 @@ public class DishController {
      * @param dishName      nazwa dania
      * @param restaurantName    nazwa restauracij
      * */
+    @CrossOrigin
     @GetMapping("/restaurants/{restaurantName}/dishes/{dishName}")
     public ResponseEntity<DishDto> getDishByRestaurantName(
             @PathVariable String restaurantName,
@@ -57,7 +56,7 @@ public class DishController {
         UUID id=restaurantsService.findRestaurantByName(restaurantName).getRestaurantId();
         return new ResponseEntity(dishService.findByDishNameAndRestaurantId(id,dishName), HttpStatus.OK);
     }
-
+    @CrossOrigin
     @GetMapping("/restaurants/{restaurantName}/dishes")
     public ResponseEntity<Iterable<DishDto>> getDishesByRestaurantName(@PathVariable String restaurantName) {
         String realRestaurantName = restaurantName.replaceAll("_"," ");
